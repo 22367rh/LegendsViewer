@@ -572,6 +572,20 @@ namespace LegendsViewer.Controls.HTML
                 }
                 title += " born in " + _historicalFigure.BirthYear;
 
+                var creatureInteractions = _historicalFigure.Events.Where(evt => evt.GetType() == typeof(HfDoesInteraction) && i.Target.Id == _historicalFigure.Id).Select(evt => (HfDoesInteraction)evt).Where(interaction => !string.IsNullOrWhiteSpace(interaction.CreatureType)).ToList();
+                if (creatureInteractions.Any())
+                {
+                    var curseInteraction = creatureInteractions.First();
+                    if (curseInteraction != null)
+                    {
+                        title += ", was cursed in " + curseInteraction.Year + " at the age of " + _historicalFigure.AgeDuringWorldEvent(curseInteraction) + " to become a " + curseInteraction.CreatureType;
+                        if (curseInteraction.Doer != null)
+                        {
+                            title += " thanks to " + curseInteraction.Doer.ToLink();
+                        }
+                    }
+                }
+
                 if (_historicalFigure.CreatureTypes.Any(ct => ct.Type.Equals("necromancer", System.StringComparison.InvariantCultureIgnoreCase)))
                 {
                     var learnSecretEvents = _historicalFigure.Events.Where(evt => evt.GetType() == typeof(HfLearnsSecret)).Select(evt => (HfLearnsSecret)evt).ToList();
@@ -585,19 +599,6 @@ namespace LegendsViewer.Controls.HTML
                         else
                         {
                             title += " thanks to " + learntNecromancy.Teacher.ToLink();
-                        }
-                    }
-                }
-
-                if (_historicalFigure.CreatureTypes.Any(ct => !ct.Type.Equals("necromancer", System.StringComparison.InvariantCultureIgnoreCase)))
-                {
-                    var interactions = _historicalFigure.Events.Where(evt => evt.GetType() == typeof(HfDoesInteraction)).Select(evt => (HfDoesInteraction)evt).ToList();
-                    var curseInteraction = interactions.SingleOrDefault(i => i.Target.Id == _historicalFigure.Id && !string.IsNullOrWhiteSpace(i.CreatureType));
-                    if (curseInteraction != null)
-                    {
-                        title += ", was cursed in " + curseInteraction.Year + " at the age of " + _historicalFigure.AgeDuringWorldEvent(curseInteraction) + " to become a " + curseInteraction.CreatureType;
-                        if (curseInteraction.Doer != null) {
-                            title += " thanks to " + curseInteraction.Doer.ToLink();
                         }
                     }
                 }
