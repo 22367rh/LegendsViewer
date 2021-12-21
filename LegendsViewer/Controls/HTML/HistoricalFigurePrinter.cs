@@ -650,72 +650,27 @@ namespace LegendsViewer.Controls.HTML
             //}
             if (_historicalFigure.Spheres.Count > 0)
             {
-                string spheresCsv = string.Join(", ", _historicalFigure.Spheres).Replace(", " + _historicalFigure.Spheres.Last(), ", and " + _historicalFigure.Spheres.Last());
-                Html.Append(Bold("Associated Spheres: ") + spheresCsv + LineBreak);
+                Html.Append(Bold("Associated Spheres: ") + _historicalFigure.Spheres.ToSpacedCsvWithOxfordComma() + LineBreak);
             }
             if (_historicalFigure.Goal != "")
             {
                 Html.AppendLine(Bold("Goal: ") + _historicalFigure.Goal + LineBreak);
             }
-
             if (_historicalFigure.ActiveInteractions.Count > 0)
             {
-                string interactions = "";
-                foreach (string interaction in _historicalFigure.ActiveInteractions)
-                {
-                    if (_historicalFigure.ActiveInteractions.Last() == interaction && _historicalFigure.ActiveInteractions.Count > 1)
-                    {
-                        interactions += " and ";
-                    }
-                    else if (interactions.Length > 0)
-                    {
-                        interactions += ", ";
-                    }
-
-                    interactions += interaction;
-                }
-                Html.AppendLine(Bold("Active Interactions: ") + interactions + LineBreak);
+                Html.AppendLine(Bold("Active Interactions: ") + _historicalFigure.ActiveInteractions.ToSpacedCsvWithOxfordComma() + LineBreak);
             }
             if (_historicalFigure.InteractionKnowledge.Count > 0)
             {
-                string interactions = "";
-                foreach (string interaction in _historicalFigure.InteractionKnowledge)
-                {
-                    if (_historicalFigure.InteractionKnowledge.Last() == interaction && _historicalFigure.InteractionKnowledge.Count > 1)
-                    {
-                        interactions += " and ";
-                    }
-                    else if (interactions.Length > 0)
-                    {
-                        interactions += ", ";
-                    }
-
-                    interactions += interaction;
-                }
-                Html.AppendLine(Bold("Interaction Knowledge: ") + interactions + LineBreak);
+                Html.AppendLine(Bold("Interaction Knowledge: ") + _historicalFigure.InteractionKnowledge.ToSpacedCsvWithOxfordComma() + LineBreak);
             }
             if (_historicalFigure.Animated)
             {
                 Html.AppendLine(Bold("Animated as: ") + _historicalFigure.AnimatedType + LineBreak);
             }
-
             if (_historicalFigure.JourneyPets.Count > 0)
             {
-                string pets = "";
-                foreach (string pet in _historicalFigure.JourneyPets)
-                {
-                    if (_historicalFigure.JourneyPets.Last() == pet && _historicalFigure.JourneyPets.Count > 1)
-                    {
-                        pets += " and ";
-                    }
-                    else if (pets.Length > 0)
-                    {
-                        pets += ", ";
-                    }
-
-                    pets += pet;
-                }
-                Html.AppendLine(Bold("Journey Pets: ") + pets + LineBreak);
+                Html.AppendLine(Bold("Journey Pets: ") + _historicalFigure.JourneyPets.ToSpacedCsvWithOxfordComma() + LineBreak);
             }
             Html.AppendLine(LineBreak);
         }
