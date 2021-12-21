@@ -32,6 +32,7 @@ namespace LegendsViewer.Controls.HTML
             PrintBreedInfo();
             PrintSiteProperties();
             PrintFamilyGraph();
+            PrintMasterApprenticeGraph();
             PrintCurseLineage();
             PrintPositions();
             PrintRelatedHistoricalFigures();
@@ -174,6 +175,39 @@ namespace LegendsViewer.Controls.HTML
             }
         }
 
+        private void PrintMasterApprenticeGraph()
+        {
+            if (_historicalFigure.RelatedHistoricalFigures.Any(rel => rel.Type == HistoricalFigureLinkType.Master ||
+                                                                      rel.Type == HistoricalFigureLinkType.FormerMaster ||
+                                                                      rel.Type == HistoricalFigureLinkType.Apprentice ||
+                                                                      rel.Type == HistoricalFigureLinkType.FormerApprentice))
+            {
+                string nodes = CreateNode(_historicalFigure);
+                string edges = "";
+                int mastertreesize = 0;
+                int apprenticetreesize = 0;
+                GetMasterApprenticeDataMaster(_historicalFigure, ref nodes, ref edges, ref mastertreesize);
+                GetMasterApprenticeDataApprentices(_historicalFigure, ref nodes, ref edges, ref apprenticetreesize);
+
+                Html.AppendLine(Bold("Master-Apprentice Tree") + LineBreak);
+                Html.AppendLine("<div id=\"masterapprenticegraph\" class=\"legends_graph\"></div>");
+                Html.AppendLine("<script type=\"text/javascript\" src=\"" + LocalFileProvider.LocalPrefix +
+                                "WebContent/scripts/cytoscape.min.js\"></script>");
+                Html.AppendLine("<script type=\"text/javascript\" src=\"" + LocalFileProvider.LocalPrefix +
+                                "WebContent/scripts/cytoscape-dagre.js\"></script>");
+                Html.AppendLine("<script>");
+                Html.AppendLine("window.masterapprenticegraph_nodes = [");
+                Html.AppendLine(nodes);
+                Html.AppendLine("]");
+                Html.AppendLine("window.masterapprenticegraph_edges = [");
+                Html.AppendLine(edges);
+                Html.AppendLine("]");
+                Html.AppendLine("</script>");
+                Html.AppendLine("<script type=\"text/javascript\" src=\"" + LocalFileProvider.LocalPrefix +
+                                "WebContent/scripts/masterapprenticegraph.js\"></script>");
+            }
+        }
+
         private void PrintFamilyGraph()
         {
             if (_historicalFigure.RelatedHistoricalFigures.Any(rel => rel.Type == HistoricalFigureLinkType.Mother ||
@@ -206,7 +240,7 @@ namespace LegendsViewer.Controls.HTML
             }
         }
 
-        private string CreateNode(HistoricalFigure hf)
+        private string CreateNode(HistoricalFigure hf, KeyValuePair<string, string>? additionalDescriptionAndClass = null)
         {
             string classes = hf.Equals(_historicalFigure) ? " current" : "";
 
@@ -240,6 +274,17 @@ namespace LegendsViewer.Controls.HTML
                 description += "Ghost ";
                 classes += " ghost";
             }
+            if (hf.Deity)
+            {
+                description += "Deity ";
+                classes += " deity";
+            }
+            if (additionalDescriptionAndClass.HasValue)
+            {
+                var kvp = additionalDescriptionAndClass.Value;
+                if (!string.IsNullOrWhiteSpace(kvp.Key)) description += kvp.Key + " ";
+                if (!string.IsNullOrWhiteSpace(kvp.Value)) classes += " " + kvp.Value;
+            }
             description += !string.IsNullOrWhiteSpace(hf.AssociatedType) && hf.AssociatedType != "Standard" ? hf.AssociatedType : "";
             if (!string.IsNullOrWhiteSpace(description))
             {
@@ -254,23 +299,6 @@ namespace LegendsViewer.Controls.HTML
             }
             string node = "{ data: { id: '" + hf.Id + "', name: '" + WebUtility.HtmlEncode(title) + "', href: 'hf#" + hf.Id + "' , faveColor: '" + (hf.Caste == "Male" ? "#6FB1FC" : "#EDA1ED") + "' }, classes: '" + classes + "' },";
             return node;
-        }
-
-        private void GetFamilyDataChildren(HistoricalFigure hf, ref string nodes, ref string edges)
-        {
-            foreach (HistoricalFigure child in hf.RelatedHistoricalFigures.Where(rel => rel.Type == HistoricalFigureLinkType.Child).Select(rel => rel.HistoricalFigure))
-            {
-                string node = CreateNode(child);
-                if (!nodes.Contains(node))
-                {
-                    nodes += node;
-                }
-                string edge = "{ data: { source: '" + hf.Id + "', target: '" + child.Id + "' } },";
-                if (!edges.Contains(edge))
-                {
-                    edges += edge;
-                }
-            }
         }
 
         private void GetFamilyDataParents(HistoricalFigure hf, ref string nodes, ref string edges, ref int mothertreesize, ref int fathertreesize)
@@ -312,6 +340,84 @@ namespace LegendsViewer.Controls.HTML
                     GetFamilyDataParents(father, ref nodes, ref edges, ref mothertreesize, ref fathertreesize);
                 }
                 fathertreesize--;
+            }
+        }
+
+        private void GetFamilyDataChildren(HistoricalFigure hf, ref string nodes, ref string edges)
+        {
+            foreach (HistoricalFigure child in hf.RelatedHistoricalFigures.Where(rel => rel.Type == HistoricalFigureLinkType.Child).Select(rel => rel.HistoricalFigure))
+            {
+                string node = CreateNode(child);
+                if (!nodes.Contains(node))
+                {
+                    nodes += node;
+                }
+                string edge = "{ data: { source: '" + hf.Id + "', target: '" + child.Id + "' } },";
+                if (!edges.Contains(edge))
+                {
+                    edges += edge;
+                }
+            }
+        }
+
+        private void GetMasterApprenticeDataMaster(HistoricalFigure hf, ref string nodes, ref string edges, ref int mastertreesize)
+        {
+            var masters = hf.RelatedHistoricalFigures.Where(rel => rel.Type == HistoricalFigureLinkType.Master).Select(rel => rel.HistoricalFigure); 
+            var formermasters = hf.RelatedHistoricalFigures.Where(rel => rel.Type == HistoricalFigureLinkType.FormerMaster).Select(rel => rel.HistoricalFigure);
+            var allMasters = masters.Union(formermasters).OrderBy(m => m.BirthYear).ToList();
+            if (masters.Any())
+            {
+                foreach (HistoricalFigure master in allMasters)
+                {
+                    mastertreesize++;
+                    string node = formermasters.Contains(master) 
+                                    ? CreateNode(master, new KeyValuePair<string, string>("", "former")) 
+                                    : CreateNode(master);
+                    if (!nodes.Contains(node))
+                    {
+                        nodes += node;
+                    }
+                    string edge = "{ data: { source: '" + master.Id + "', target: '" + hf.Id + "' } },";
+                    if (!edges.Contains(edge))
+                    {
+                        edges += edge;
+                    }
+                    if (mastertreesize < 5)
+                    {
+                        GetMasterApprenticeDataMaster(master, ref nodes, ref edges, ref mastertreesize);
+                    }
+                    mastertreesize--;
+                }
+            }
+            
+        }
+
+        private void GetMasterApprenticeDataApprentices(HistoricalFigure hf, ref string nodes, ref string edges, ref int apprenticetreesize)
+        {
+            var apprentices = hf.RelatedHistoricalFigures.Where(rel => rel.Type == HistoricalFigureLinkType.Apprentice).Select(rel => rel.HistoricalFigure);
+            var formerapprentices = hf.RelatedHistoricalFigures.Where(rel => rel.Type == HistoricalFigureLinkType.FormerApprentice).Select(rel => rel.HistoricalFigure);
+            var allApprentices = apprentices.Union(formerapprentices).OrderBy(a => a.BirthYear).ToList();
+            foreach (HistoricalFigure apprentice in allApprentices)
+            {
+                apprenticetreesize++;
+                string node = formerapprentices.Contains(apprentice) 
+                                ? CreateNode(apprentice, new KeyValuePair<string, string>("", "former")) 
+                                : CreateNode(apprentice);
+                if (!nodes.Contains(node))
+                {
+                    nodes += node;
+                }
+                string edge = "{ data: { source: '" + hf.Id + "', target: '" + apprentice.Id + "' } },";
+                if (!edges.Contains(edge))
+                {
+                    edges += edge;
+                }
+
+                if (apprenticetreesize < 5)
+                {
+                    GetMasterApprenticeDataApprentices(apprentice, ref nodes, ref edges, ref apprenticetreesize);
+                }
+                apprenticetreesize--;
             }
         }
 
