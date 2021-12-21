@@ -39,7 +39,7 @@ namespace LegendsViewer.Controls.Map
             }
             occurences = occurences.GroupBy(occurence => occurence).Select(occurence => occurence.Key).ToList();
             int maxOccurences;
-            if (occurencesCount.Count > 0)
+            if (occurencesCount.Any())
             {
                 maxOccurences = occurencesCount.Max();
             }

@@ -209,7 +209,7 @@ namespace LegendsViewer.Controls.Query
                 ? _selectProperties.ParentType 
                 : _selectProperties.SelectedProperty.Type);
 
-            if (columns.Count > 0)
+            if (columns.Any())
             {
                 dgResults.AutoGenerateColumns = false;
                 dgResults.Columns.AddRange(columns.ToArray());

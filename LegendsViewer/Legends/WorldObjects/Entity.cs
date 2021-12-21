@@ -484,19 +484,19 @@ namespace LegendsViewer.Legends.WorldObjects
             switch (Type)
             {
                 case EntityType.Religion:
-                    if (Worshiped.Count > 0)
+                    if (Worshiped.Any())
                     {
                         summary += " centered around the worship of " + Worshiped.First().ToLink(link, pov);
                     }
                     break;
                 case EntityType.MilitaryUnit:
                     bool isWorshipping = false;
-                    if (Worshiped.Count > 0)
+                    if (Worshiped.Any())
                     {
                         summary += " devoted to the worship of " + Worshiped.First().ToLink(link, pov);
                         isWorshipping = true;
                     }
-                    if (Weapons.Count > 0)
+                    if (Weapons.Any())
                     {
                         if (isWorshipping)
                         {

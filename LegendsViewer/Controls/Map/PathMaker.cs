@@ -68,12 +68,12 @@ namespace LegendsViewer.Controls.Map
         //        node.Previous = null;
         //    }
 
-        //    if (sites.Count > 0)
+        //    if (sites.Any())
         //    {
         //        sites.First().Distance = 0;
         //    }
 
-        //    while (sites.Count > 0)
+        //    while (sites.Any())
         //    {
         //        SiteNode current = sites.First();
         //        foreach (SiteNode site in sites)
@@ -114,12 +114,12 @@ namespace LegendsViewer.Controls.Map
             }
 
             SiteNode current = null;
-            if (sites.Count > 0)
+            if (sites.Any())
             {
                 sites.First().Distance = 0;
                 current = sites.First();
             }
-            while (sites.Count > 0)
+            while (sites.Any())
             {
                 foreach (SitePath path in current.Paths)
                 {

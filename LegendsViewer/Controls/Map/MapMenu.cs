@@ -206,7 +206,7 @@ namespace LegendsViewer.Controls.Map
         public virtual bool HighlightOption(int x, int y)
         {
             if (SelectedOption?.SubMenu != null && SelectedOption.SubMenu.HighlightOption(x, y)) { }
-            else if (x >= MenuBox.Left && x <= MenuBox.Right && y >= MenuBox.Top && y <= MenuBox.Bottom && Options.Count > 0)
+            else if (x >= MenuBox.Left && x <= MenuBox.Right && y >= MenuBox.Top && y <= MenuBox.Bottom && Options.Any())
             {
                 SelectedOption = Options[(y - MenuBox.Top - 1) / OptionHeight];
             }
@@ -331,7 +331,7 @@ namespace LegendsViewer.Controls.Map
                     {
                         site.UntranslatedName
                     };
-                    if (site.Populations.Count > 0)
+                    if (site.Populations.Any())
                     {
                         details.Add("Populations: ");
                         foreach (Population population in site.Populations)

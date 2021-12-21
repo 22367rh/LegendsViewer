@@ -342,7 +342,7 @@ namespace LegendsViewer.Legends.Parser
                 }
             }
             //check for loss of period ownership, since some some loss of ownership eventsList are missing
-            if (_owner == null && _site.OwnerHistory.Count > 0 && _site.OwnerHistory.Last().EndYear == -1)
+            if (_owner == null && _site.OwnerHistory.Any() && _site.OwnerHistory.Last().EndYear == -1)
             {
                 _site.OwnerHistory.Last().EndYear = _world.Events.Last().Year - 1;
                 _site.OwnerHistory.Last().EndCause = "abandoned";

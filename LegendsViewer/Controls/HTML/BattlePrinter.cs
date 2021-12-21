@@ -147,7 +147,7 @@ namespace LegendsViewer.Controls.HTML
             Html.AppendLine("</ul>");
             Html.AppendLine("</td></tr></table></br>");
 
-            if (_battle.NonCombatants.Count > 0)
+            if (_battle.NonCombatants.Any())
             {
                 Html.AppendLine("<b>Non Combatants</b></br>");
                 Html.AppendLine("<ol>");

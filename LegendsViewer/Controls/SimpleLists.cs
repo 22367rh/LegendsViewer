@@ -90,7 +90,7 @@ namespace LegendsViewer.Controls
 
             if (Leader)
             {
-                filtered = filtered.Where(hf => hf.Positions.Count > 0);
+                filtered = filtered.Where(hf => hf.Positions.Any());
             }
 
             if (Alive)

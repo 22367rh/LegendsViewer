@@ -648,7 +648,7 @@ namespace LegendsViewer.Controls.HTML
             //{
             //    HTML.AppendLine(Bold("Used Identity: ") + HistoricalFigure.UsedIdentity.ToLink() + LineBreak);
             //}
-            if (_historicalFigure.Spheres.Count > 0)
+            if (_historicalFigure.Spheres.Any())
             {
                 Html.Append(Bold("Associated Spheres: ") + _historicalFigure.Spheres.ToSpacedCsvWithOxfordComma() + LineBreak);
             }
@@ -656,11 +656,11 @@ namespace LegendsViewer.Controls.HTML
             {
                 Html.AppendLine(Bold("Goal: ") + _historicalFigure.Goal + LineBreak);
             }
-            if (_historicalFigure.ActiveInteractions.Count > 0)
+            if (_historicalFigure.ActiveInteractions.Any())
             {
                 Html.AppendLine(Bold("Active Interactions: ") + _historicalFigure.ActiveInteractions.ToSpacedCsvWithOxfordComma() + LineBreak);
             }
-            if (_historicalFigure.InteractionKnowledge.Count > 0)
+            if (_historicalFigure.InteractionKnowledge.Any())
             {
                 Html.AppendLine(Bold("Interaction Knowledge: ") + _historicalFigure.InteractionKnowledge.ToSpacedCsvWithOxfordComma() + LineBreak);
             }
@@ -668,7 +668,7 @@ namespace LegendsViewer.Controls.HTML
             {
                 Html.AppendLine(Bold("Animated as: ") + _historicalFigure.AnimatedType + LineBreak);
             }
-            if (_historicalFigure.JourneyPets.Count > 0)
+            if (_historicalFigure.JourneyPets.Any())
             {
                 Html.AppendLine(Bold("Journey Pets: ") + _historicalFigure.JourneyPets.ToSpacedCsvWithOxfordComma() + LineBreak);
             }
@@ -677,7 +677,7 @@ namespace LegendsViewer.Controls.HTML
 
         private void PrintPositions()
         {
-            if (_historicalFigure.Positions.Count > 0)
+            if (_historicalFigure.Positions.Any())
             {
                 Html.AppendLine(Bold("Positions") + LineBreak);
                 StartList(ListType.Ordered);
@@ -735,7 +735,7 @@ namespace LegendsViewer.Controls.HTML
 
         private void PrintRelatedEntities()
         {
-            if (_historicalFigure.RelatedEntities.Count > 0)
+            if (_historicalFigure.RelatedEntities.Any())
             {
                 Html.AppendLine(Bold("Related Entities") + LineBreak);
                 StartList(ListType.Unordered);
@@ -787,7 +787,7 @@ namespace LegendsViewer.Controls.HTML
 
         private void PrintRelatedSites()
         {
-            if (_historicalFigure.RelatedSites.Count > 0)
+            if (_historicalFigure.RelatedSites.Any())
             {
                 Html.AppendLine(Bold("Related Sites") + LineBreak);
                 Html.AppendLine("<ul>");
@@ -819,7 +819,7 @@ namespace LegendsViewer.Controls.HTML
 
         private void PrintRelationships()
         {
-            if (_historicalFigure.RelationshipProfiles.Count > 0)
+            if (_historicalFigure.RelationshipProfiles.Any())
             {
                 Html.AppendLine(Bold("Relationships") + LineBreak);
                 Html.AppendLine("<ol>");
@@ -834,12 +834,9 @@ namespace LegendsViewer.Controls.HTML
                         {
                             Html.Append(" (" + relationshipProfile.Type.GetDescription() + ")");
                         }
-                        foreach (var reputation in relationshipProfile.Reputations)
+                        foreach (var reputation in relationshipProfile.Reputations.Where(r => r.Strength != 0))
                         {
-                            if (reputation.Strength != 0)
-                            {
-                                Html.Append(", " + reputation.Print() + " ");
-                            }
+                            Html.Append(", " + reputation.Print() + " ");
                         }
                         Html.AppendLine("</li>");
                     }
@@ -850,7 +847,7 @@ namespace LegendsViewer.Controls.HTML
 
         private void PrintVagueRelationships()
         {
-            if (_historicalFigure.VagueRelationships.Count > 0)
+            if (_historicalFigure.VagueRelationships.Any())
             {
                 Html.AppendLine(Bold("Vague Relationships") + LineBreak);
                 Html.AppendLine("<ul>");
@@ -891,7 +888,7 @@ namespace LegendsViewer.Controls.HTML
 
         private void PrintReputations()
         {
-            if (_historicalFigure.Reputations.Count > 0)
+            if (_historicalFigure.Reputations.Any())
             {
                 Html.AppendLine(Bold("Entity Reputations") + LineBreak);
                 StartList(ListType.Unordered);
@@ -921,7 +918,7 @@ namespace LegendsViewer.Controls.HTML
 
         private void PrintSkills()
         {
-            if (_historicalFigure.Skills.Count > 0)
+            if (_historicalFigure.Skills.Any())
             {
                 var described = _historicalFigure.Skills.ConvertAll(SkillDictionary.LookupSkill);
 
@@ -946,7 +943,7 @@ namespace LegendsViewer.Controls.HTML
         private void PrintBattles()
         {
             Battle unnotableDeathBattle = null; //Temporarily make the battle that the HF died in Notable so it shows up.
-            if (_historicalFigure.Battles.Count > 0 && _historicalFigure.Battles.Last().Collection.OfType<HfDied>().Count(death => death.HistoricalFigure == _historicalFigure) == 1 && !_historicalFigure.Battles.Last().Notable)
+            if (_historicalFigure.Battles.Any() && _historicalFigure.Battles.Last().Collection.OfType<HfDied>().Count(death => death.HistoricalFigure == _historicalFigure) == 1 && !_historicalFigure.Battles.Last().Notable)
             {
                 unnotableDeathBattle = _historicalFigure.Battles.Last();
                 unnotableDeathBattle.Notable = true;
@@ -973,7 +970,7 @@ namespace LegendsViewer.Controls.HTML
                         battleTable.AddData(battle.ParentCollection.ToLink());
                     }
                     string involvement = "";
-                    if (battle.NotableAttackers.Count > 0 && battle.NotableAttackers.Contains(_historicalFigure))
+                    if (battle.NotableAttackers.Any() && battle.NotableAttackers.Contains(_historicalFigure))
                     {
                         if (battle.Collection.OfType<FieldBattle>().Any(fieldBattle => fieldBattle.AttackerGeneral == _historicalFigure) ||
                             battle.Collection.OfType<AttackedSite>().Any(attack => attack.AttackerGeneral == _historicalFigure))
@@ -985,7 +982,7 @@ namespace LegendsViewer.Controls.HTML
                             involvement += "Fought in the attack";
                         }
                     }
-                    else if (battle.NotableDefenders.Count > 0 && battle.NotableDefenders.Contains(_historicalFigure))
+                    else if (battle.NotableDefenders.Any() && battle.NotableDefenders.Contains(_historicalFigure))
                     {
                         if (battle.Collection.OfType<FieldBattle>().Any(fieldBattle => fieldBattle.DefenderGeneral == _historicalFigure) ||
                             battle.Collection.OfType<AttackedSite>().Any(attack => attack.DefenderGeneral == _historicalFigure))
@@ -1055,7 +1052,7 @@ namespace LegendsViewer.Controls.HTML
 
         private void PrintKills()
         {
-            if (_historicalFigure.NotableKills.Count > 0)
+            if (_historicalFigure.NotableKills.Any())
             {
                 Html.AppendLine(Bold("Kills"));
                 StartList(ListType.Ordered);
@@ -1076,7 +1073,7 @@ namespace LegendsViewer.Controls.HTML
 
         private void PrintBeastAttacks()
         {
-            if (_historicalFigure.BeastAttacks != null && _historicalFigure.BeastAttacks.Count > 0)
+            if (_historicalFigure.BeastAttacks != null && _historicalFigure.BeastAttacks.Any())
             {
                 Html.AppendLine(Bold("Beast Attacks"));
                 StartList(ListType.Ordered);

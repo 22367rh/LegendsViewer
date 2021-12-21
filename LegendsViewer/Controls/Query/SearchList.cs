@@ -133,7 +133,7 @@ namespace LegendsViewer.Controls.Query
             try
             {
                 Expression<Func<T, bool>> predicate;
-                if (searchCriteria.Count > 0)
+                if (searchCriteria.Any())
                 {
                     predicate = t => false;
                 }

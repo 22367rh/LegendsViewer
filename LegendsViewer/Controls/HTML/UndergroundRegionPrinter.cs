@@ -48,7 +48,7 @@ namespace LegendsViewer.Controls.HTML
             }
 
             int deathCount = _region.Events.OfType<HfDied>().Count();
-            if (deathCount > 0 || _region.Battles.Count > 0)
+            if (deathCount > 0 || _region.Battles.Any())
             {
                 var popInBattle =
                     _region.Battles

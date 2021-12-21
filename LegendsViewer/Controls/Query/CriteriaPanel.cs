@@ -200,7 +200,7 @@ namespace LegendsViewer.Controls.Query
                     //criteria.Operator = QueryOperator.And;
                 }
             }
-            if (query.Count > 0)
+            if (query.Any())
             {
                 query.First().Operator = QueryOperator.Or;
             }

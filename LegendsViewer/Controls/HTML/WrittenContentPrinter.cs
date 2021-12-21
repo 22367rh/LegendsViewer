@@ -26,7 +26,7 @@ namespace LegendsViewer.Controls.HTML
             if (_writtenContent.Type != WrittenContentType.Unknown)
             {
                 var type = _writtenContent.Type.GetDescription();
-                string firstWord = _writtenContent.Styles.Count > 0 ? _writtenContent.Styles.First() : type;
+                string firstWord = _writtenContent.Styles.Any() ? _writtenContent.Styles.First() : type;
                 if (firstWord.StartsWith("A") || firstWord.StartsWith("E") || firstWord.StartsWith("I") || firstWord.StartsWith("O") || firstWord.StartsWith("U"))
                 {
                     Html.AppendLine("<b>An ");

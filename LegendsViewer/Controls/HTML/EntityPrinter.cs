@@ -386,7 +386,7 @@ namespace LegendsViewer.Controls.HTML
                 Html.AppendLine(_entity.PrintIdenticon(true) + LineBreak + LineBreak);
             }
 
-            if (_entity.SiteHistory.Count > 0)
+            if (_entity.SiteHistory.Any())
             {
                 if (_entity.SiteHistory.Count(sitePeriod => sitePeriod.EndYear == -1) == 0)
                 {
@@ -399,7 +399,7 @@ namespace LegendsViewer.Controls.HTML
 
         private void PrintLeaders()
         {
-            if (_entity.Leaders != null && _entity.Leaders.Count > 0)
+            if (_entity.Leaders != null && _entity.Leaders.Any())
             {
                 Html.AppendLine(Bold("Leaderhistory") + " " + LineBreak);
                 foreach (string leaderType in _entity.LeaderTypes)
@@ -420,7 +420,7 @@ namespace LegendsViewer.Controls.HTML
 
         private void PrintHonors()
         {
-            if (_entity.Honors.Count > 0)
+            if (_entity.Honors.Any())
             {
                 Html.AppendLine(Bold("Honors") + " " + LineBreak);
                 Html.AppendLine("<ul>");
@@ -470,7 +470,7 @@ namespace LegendsViewer.Controls.HTML
 
         private void PrintWorships()
         {
-            if (_entity.Worshiped != null && _entity.Worshiped.Count > 0)
+            if (_entity.Worshiped != null && _entity.Worshiped.Any())
             {
                 Html.AppendLine(Bold("Worships") + LineBreak);
                 StartList(ListType.Unordered);
@@ -580,7 +580,7 @@ namespace LegendsViewer.Controls.HTML
 
         private void PrintSiteHistory()
         {
-            if (_entity.SiteHistory.Count > 0)
+            if (_entity.SiteHistory.Any())
             {
                 Html.AppendLine(Bold("Site History") + LineBreak);
                 TableMaker siteTable = new TableMaker(true);

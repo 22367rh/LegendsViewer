@@ -355,15 +355,10 @@ namespace LegendsViewer.Controls.Chart
                     List<HistoricalFigure> hfs = null;
 
 
-                    if (_focusObject is EventCollection)
-                    {
-                        eventsList = (_focusObject as EventCollection).GetSubEvents();
-                    }
-                    else
-                    {
-                        eventsList = (_focusObject as WorldObject).Events;
-                    }
-
+                    eventsList = _focusObject is EventCollection 
+                                    ? (_focusObject as EventCollection).GetSubEvents() 
+                                    : (_focusObject as WorldObject).Events;
+                    
                     if (_focusObject.GetType() == typeof(Entity))
                     {
                         wars = (_focusObject as Entity).Wars;
@@ -416,7 +411,7 @@ namespace LegendsViewer.Controls.Chart
                     }
 
                     eventsList = eventsList.OrderBy(events => events.Year).ToList();
-                    if (eventsList.Count > 0)
+                    if (eventsList.Any())
                     {
                         startYear = eventsList.First().Year;
                         endYear = eventsList.Last().Year;
@@ -458,7 +453,7 @@ namespace LegendsViewer.Controls.Chart
 
                     //uses an event index so the loop doesn't go through every event for each year, only the eventsList for that year
                     int eventIndex = 0;
-                    if (eventsList.Count > 0)
+                    if (eventsList.Any())
                     {
                         eventIndex = eventsList.IndexOf(eventsList.First(ev => ev.Year == startYear));
                     }
@@ -480,7 +475,7 @@ namespace LegendsViewer.Controls.Chart
                     }
                     int battleStartYear = 0;
                     int battleIndex = 0;
-                    if (battles != null && battles.Count > 0)
+                    if (battles != null && battles.Any())
                     {
                         if (battles.FindIndex(battle => battle.StartYear == startYear) >= 0)
                         {
@@ -892,8 +887,8 @@ namespace LegendsViewer.Controls.Chart
             world.Text = "World";
 
 
-            if (_focusObject is WorldObject && (_focusObject as WorldObject).Events.Count > 0
-                || _focusObject.GetType() == typeof(War) && (_focusObject as EventCollection).GetSubEvents().Count > 0)
+            if (_focusObject is WorldObject && (_focusObject as WorldObject).Events.Any()
+                || _focusObject.GetType() == typeof(War) && (_focusObject as EventCollection).GetSubEvents().Any())
             {
                 timeline.DropDownItems.Add(new ChartMenuItem(this) { Option = ChartOption.TimelineEvents });
                 timeline.DropDownItems.Add(new ChartMenuItem(this) { Option = ChartOption.TimelineEventsFiltered });
@@ -915,12 +910,12 @@ namespace LegendsViewer.Controls.Chart
             else if (_focusObject.GetType() == typeof(HistoricalFigure))
             {
                 HistoricalFigure hf = _focusObject as HistoricalFigure;
-                if (hf.NotableKills.Count > 0)
+                if (hf.NotableKills.Any())
                 {
                     other.DropDownItems.Add(new ChartMenuItem(this) { Option = ChartOption.OtherKillsByRace });
                 }
 
-                if (hf.Battles.Count > 0)
+                if (hf.Battles.Any())
                 {
                     timeline.DropDownItems.Add(new ChartMenuItem(this) { Option = ChartOption.TimelineBattles });
                 }
@@ -933,17 +928,17 @@ namespace LegendsViewer.Controls.Chart
             else if (_focusObject.GetType() == typeof(Entity))
             {
                 Entity entity = _focusObject as Entity;
-                if (entity.SiteHistory.Count > 0)
+                if (entity.SiteHistory.Any())
                 {
                     timeline.DropDownItems.Add(new ChartMenuItem(this) { Option = ChartOption.TimelineActiveSites });
                 }
 
-                if (entity.Populations.Count > 0)
+                if (entity.Populations.Any())
                 {
                     other.DropDownItems.Add(new ChartMenuItem(this) { Option = ChartOption.OtherEntityPopulations });
                 }
 
-                if (entity.Wars.Count > 0)
+                if (entity.Wars.Any())
                 {
                     timeline.DropDownItems.Add(new ChartMenuItem(this) { Option = ChartOption.TimelineActiveWars });
                     timeline.DropDownItems.Add(new ChartMenuItem(this) { Option = ChartOption.TimelineBattles });
@@ -954,7 +949,7 @@ namespace LegendsViewer.Controls.Chart
             else if (_focusObject.GetType() == typeof(Site))
             {
                 Site site = _focusObject as Site;
-                if (site.BeastAttacks.Count > 0)
+                if (site.BeastAttacks.Any())
                 {
                     timeline.DropDownItems.Add(new ChartMenuItem(this) { Option = ChartOption.TimelineBeastAttacks });
                 }
@@ -964,12 +959,12 @@ namespace LegendsViewer.Controls.Chart
                     timeline.DropDownItems.Add(new ChartMenuItem(this) { Option = ChartOption.TimelineBattles });
                     timeline.DropDownItems.Add(new ChartMenuItem(this) { Option = ChartOption.TimelineBattleDeaths });
                 }
-                if (site.Populations.Count > 0)
+                if (site.Populations.Any())
                 {
                     other.DropDownItems.Add(new ChartMenuItem(this) { Option = ChartOption.OtherSitePopulations });
                 }
 
-                if (site.Events.OfType<HfDied>().Any() || site.Warfare.Count > 0)
+                if (site.Events.OfType<HfDied>().Any() || site.Warfare.Any())
                 {
                     other.DropDownItems.Add(new ChartMenuItem(this) { Option = ChartOption.OtherDeaths });
                 }
@@ -982,7 +977,7 @@ namespace LegendsViewer.Controls.Chart
                     other.DropDownItems.Add(new ChartMenuItem(this) { Option = ChartOption.OtherDeaths });
                 }
 
-                if (region.Battles.Count > 0)
+                if (region.Battles.Any())
                 {
                     timeline.DropDownItems.Add(new ChartMenuItem(this) { Option = ChartOption.TimelineBattles });
                     timeline.DropDownItems.Add(new ChartMenuItem(this) { Option = ChartOption.TimelineBattleDeaths });
@@ -1044,7 +1039,7 @@ namespace LegendsViewer.Controls.Chart
                     }
                     if (OtherChart)
                     {
-                        while (SeriesOptions.Count > 0)
+                        while (SeriesOptions.Any())
                         {
                             RemoveSeries(SeriesOptions[0]);
                         }
@@ -1062,7 +1057,7 @@ namespace LegendsViewer.Controls.Chart
                     OtherChart = false;
                     break;
                 default:
-                    while (SeriesOptions.Count > 0)
+                    while (SeriesOptions.Any())
                     {
                         RemoveSeries(SeriesOptions[0]);
                     }

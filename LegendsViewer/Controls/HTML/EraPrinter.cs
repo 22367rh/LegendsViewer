@@ -42,7 +42,7 @@ namespace LegendsViewer.Controls.HTML
 
         private void PrintWars()
         {
-            if (_era.Wars.Count > 0)
+            if (_era.Wars.Any())
             {
                 int warCount = 1;
                 Html.AppendLine("<b>Wars</b></br>");

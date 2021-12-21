@@ -28,7 +28,7 @@ namespace LegendsViewer.Legends.EventCollections
         {
             get
             {
-                if (_deaths.Count > 0)
+                if (_deaths.Any())
                 {
                     return _deaths;
                 }
@@ -147,7 +147,7 @@ namespace LegendsViewer.Legends.EventCollections
             {
                 Length = EndYear - StartYear;
             }
-            else if (world.Events.Count > 0)
+            else if (world.Events.Any())
             {
                 Length = world.Events.Last().Year - StartYear;
             }

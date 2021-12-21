@@ -154,7 +154,7 @@ namespace LegendsViewer.Controls.Map
             }
 
             //Center and zoom map on focusObject of the map
-            if (FocusObject == null || _focusObjects.Count > 0)
+            if (FocusObject == null || _focusObjects.Any())
             {
                 Center = new Point(_map.Width / 2, _map.Height / 2);
             }
@@ -377,7 +377,7 @@ namespace LegendsViewer.Controls.Map
             _optionsMenu.Draw(e.Graphics);
             DrawInfo(e.Graphics);
             DrawMiniMap(e.Graphics);
-            if (_hoverMenu.Options.Count > 0)
+            if (_hoverMenu.Options.Any())
             {
                 _hoverMenu.Draw(e.Graphics);
             }
@@ -826,7 +826,7 @@ namespace LegendsViewer.Controls.Map
             {
                 //DisplayObjects.RemoveAll(displayObject => displayObject.GetType() == typeof(Battle) && displayObject != FocusObject);
                 _battles.Clear();
-                if (_focusObjects.Count > 0 && _focusObjects.First().GetType() == typeof(Battle))
+                if (_focusObjects.Any() && _focusObjects.First().GetType() == typeof(Battle))
                 {
                     _battles.AddRange(_focusObjects.Cast<Battle>());
                 }
@@ -1040,7 +1040,7 @@ namespace LegendsViewer.Controls.Map
                 Overlay.Dispose();
             }
 
-            if (occurences.Count > 0)
+            if (occurences.Any())
             {
                 Overlay = HeatMapMaker.Create(_map.Width, _map.Height, coordinatesList, occurences);
             }
@@ -1330,7 +1330,7 @@ namespace LegendsViewer.Controls.Map
                 {
                     _hoverMenu.Options.First().Click();
                 }
-                else if (!_hoverMenu.Open && _hoverMenu.Options.Count > 0)
+                else if (!_hoverMenu.Open && _hoverMenu.Options.Any())
                 {
                     _hoverMenu.Open = true;
                 }
@@ -1380,12 +1380,12 @@ namespace LegendsViewer.Controls.Map
                     addOptions.Add(battle);
                 }
 
-                if (BattlesToggled || _battles.Count > 0)
+                if (BattlesToggled || _battles.Any())
                 {
                     if (_battleLocations.Any(location => location == tile))
                     {
                         List<Battle> battles = _battles.Where(battle => battle.Coordinates == tile).ToList();
-                        if (battles.Count > 0)
+                        if (battles.Any())
                         {
                             addOptions.Add(battles);
                         }
@@ -1393,7 +1393,7 @@ namespace LegendsViewer.Controls.Map
                 }
 
                 _hoverMenu.AddOptions(addOptions);
-                if (_hoverMenu.Options.Count > 0)
+                if (_hoverMenu.Options.Any())
                 {
                     _hoverMenu.MenuBox.Location = WindowToTilePoint(e.Location);
                     _hoverMenu.MenuBox.X = Convert.ToInt32(((_hoverMenu.MenuBox.X + 1) * TileSize - Source.X) * PixelWidth);

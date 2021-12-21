@@ -738,7 +738,7 @@ namespace LegendsViewer.Legends
 
         private void ResolveStructureProperties()
         {
-            if (Structures.Count > 0)
+            if (Structures.Any())
             {
                 _worker.ReportProgress(0, "... Sites and Structures");
             }
@@ -750,7 +750,7 @@ namespace LegendsViewer.Legends
 
         private void ResolveSitePropertyOwners()
         {
-            if (Sites.Count > 0)
+            if (Sites.Any())
             {
                 _worker.ReportProgress(0, "... Structure Owners");
             }
@@ -768,7 +768,7 @@ namespace LegendsViewer.Legends
 
         private void ResolveHonorEntities()
         {
-            if (HistoricalFigures.Count > 0)
+            if (HistoricalFigures.Any())
             {
                 _worker.ReportProgress(0, "... Historical Figure Honors");
             }
@@ -780,7 +780,7 @@ namespace LegendsViewer.Legends
 
         private void ResolveArtifactProperties()
         {
-            if (Artifacts.Count > 0)
+            if (Artifacts.Any())
             {
                 _worker.ReportProgress(0, "... Artifacts and Historical Figures");
             }
@@ -792,7 +792,7 @@ namespace LegendsViewer.Legends
 
         private void ResolveRegionProperties()
         {
-            if (Regions.Count > 0)
+            if (Regions.Any())
             {
                 _worker.ReportProgress(0, "... Regions and Forces");
             }
@@ -845,7 +845,7 @@ namespace LegendsViewer.Legends
 
         private void ResolveMountainPeakToRegionLinks()
         {
-            if (MountainPeaks.Count > 0)
+            if (MountainPeaks.Any())
             {
                 _worker.ReportProgress(0, "... Mountain Peaks and Regions");
             }

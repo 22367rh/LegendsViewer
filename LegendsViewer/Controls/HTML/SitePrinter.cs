@@ -198,7 +198,7 @@ namespace LegendsViewer.Controls.HTML
 
         private void PrintConnections()
         {
-            if (_site.Connections.Count > 0)
+            if (_site.Connections.Any())
             {
                 Html.AppendLine("<div class=\"row\">");
                 Html.AppendLine("<div class=\"col-md-12\">");
@@ -216,7 +216,7 @@ namespace LegendsViewer.Controls.HTML
 
         private void PrintOfficials()
         {
-            if (_site.Officials.Count > 0)
+            if (_site.Officials.Any())
             {
                 Html.AppendLine("<div class=\"row\">");
                 Html.AppendLine("<div class=\"col-md-12\">");
@@ -234,7 +234,7 @@ namespace LegendsViewer.Controls.HTML
 
         private void PrintOwnerHistory()
         {
-            if (_site.OwnerHistory.Count > 0)
+            if (_site.OwnerHistory.Any())
             {
                 Html.AppendLine("<div class=\"row\">");
                 Html.AppendLine("<div class=\"col-md-12\">");

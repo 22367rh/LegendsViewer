@@ -174,7 +174,7 @@ namespace LegendsViewer.Controls.Query
             ComparerSelect.Items.AddRange(comparers.Cast<object>().ToArray());
             //foreach (QueryComparer comparer in comparers)
             //    ComparerSelect.Items.Insert(SearchProperty.ComparerToString(comparer));
-            if (comparers.Count > 0)
+            if (comparers.Any())
             {
                 ComparerSelect.SelectedIndex = 0;
             }
