@@ -12,7 +12,7 @@
         autounselectify: true,
         userZoomingEnabled: true,
         wheelSensitivity: 0.1,
-        zoom: 0.6,
+        zoom: 0.8,
 
         style: cytoscape.stylesheet()
           .selector('node')

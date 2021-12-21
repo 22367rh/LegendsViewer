@@ -475,6 +475,12 @@ namespace LegendsViewer.Legends.WorldObjects
             }
         }
 
+
+        public int AgeDuringWorldEvent(WorldEvent worldEvent)
+        {
+            return worldEvent.Year - BirthYear;
+        }
+
         private void Initialize()
         {
             Appeared = BirthYear = BirthSeconds72 = DeathYear = DeathSeconds72 = EntityPopulationId = -1;

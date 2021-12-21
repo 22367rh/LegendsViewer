@@ -572,6 +572,23 @@ namespace LegendsViewer.Controls.HTML
                 }
                 title += " born in " + _historicalFigure.BirthYear;
 
+                if (_historicalFigure.CreatureTypes.Any(ct => ct.Type.Equals("necromancer", System.StringComparison.InvariantCultureIgnoreCase)))
+                {
+                    var learnSecretEvents = _historicalFigure.Events.Where(evt => evt.GetType() == typeof(HfLearnsSecret)).Select(evt => (HfLearnsSecret)evt).ToList();
+                    var learntNecromancy = learnSecretEvents.SingleOrDefault(bne => bne.Student.Id == _historicalFigure.Id);
+                    if (learntNecromancy != null) {
+                        title += ", became a necromancer in " + learntNecromancy.Year + " at the age of " + _historicalFigure.AgeDuringWorldEvent(learntNecromancy);
+                        if (learntNecromancy.Artifact != null)
+                        {
+                            title += " by studying " + learntNecromancy.Artifact.ToLink();
+                        } 
+                        else
+                        {
+                            title += " thanks to " + learntNecromancy.Teacher.ToLink();
+                        }
+                    }
+                }
+
                 if (_historicalFigure.DeathYear > 0)
                 {
                     HfDied death = _historicalFigure.Events.OfType<HfDied>().First(hfDeath => hfDeath.HistoricalFigure == _historicalFigure);
