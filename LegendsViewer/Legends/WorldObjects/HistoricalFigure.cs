@@ -598,6 +598,11 @@ namespace LegendsViewer.Legends.WorldObjects
             if (!Deity && !Force)
             {
                 title += " (" + BirthYear + " - " + (DeathYear == -1 ? "Present" : DeathYear.ToString()) + ")";
+            } 
+            else if (Deity && Spheres.Any())
+            {
+                string spheresCsv = string.Join(", ", Spheres).Replace(", " + Spheres.Last(), ", and " + Spheres.Last());
+                title += " (" + spheresCsv + ")";
             }
             title += "&#13";
             title += "Events: " + Events.Count;

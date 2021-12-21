@@ -650,21 +650,8 @@ namespace LegendsViewer.Controls.HTML
             //}
             if (_historicalFigure.Spheres.Count > 0)
             {
-                string spheres = "";
-                foreach (string sphere in _historicalFigure.Spheres)
-                {
-                    if (_historicalFigure.Spheres.Last() == sphere && _historicalFigure.Spheres.Count > 1)
-                    {
-                        spheres += " and ";
-                    }
-                    else if (spheres.Length > 0)
-                    {
-                        spheres += ", ";
-                    }
-
-                    spheres += sphere;
-                }
-                Html.Append(Bold("Associated Spheres: ") + spheres + LineBreak);
+                string spheresCsv = string.Join(", ", _historicalFigure.Spheres).Replace(", " + _historicalFigure.Spheres.Last(), ", and " + _historicalFigure.Spheres.Last());
+                Html.Append(Bold("Associated Spheres: ") + spheresCsv + LineBreak);
             }
             if (_historicalFigure.Goal != "")
             {
