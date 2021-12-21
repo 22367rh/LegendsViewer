@@ -572,7 +572,7 @@ namespace LegendsViewer.Controls.HTML
                 }
                 title += " born in " + _historicalFigure.BirthYear;
 
-                var creatureInteractions = _historicalFigure.Events.Where(evt => evt.GetType() == typeof(HfDoesInteraction) && i.Target.Id == _historicalFigure.Id).Select(evt => (HfDoesInteraction)evt).Where(interaction => !string.IsNullOrWhiteSpace(interaction.CreatureType)).ToList();
+                var creatureInteractions = _historicalFigure.Events.Where(evt => evt.GetType() == typeof(HfDoesInteraction) && ((HfDoesInteraction)evt).Target.Id == _historicalFigure.Id).Select(evt => (HfDoesInteraction)evt).Where(interaction => !string.IsNullOrWhiteSpace(interaction.CreatureType)).ToList();
                 if (creatureInteractions.Any())
                 {
                     var curseInteraction = creatureInteractions.First();
