@@ -589,6 +589,19 @@ namespace LegendsViewer.Controls.HTML
                     }
                 }
 
+                if (_historicalFigure.CreatureTypes.Any(ct => !ct.Type.Equals("necromancer", System.StringComparison.InvariantCultureIgnoreCase)))
+                {
+                    var interactions = _historicalFigure.Events.Where(evt => evt.GetType() == typeof(HfDoesInteraction)).Select(evt => (HfDoesInteraction)evt).ToList();
+                    var curseInteraction = interactions.SingleOrDefault(i => i.Target.Id == _historicalFigure.Id && !string.IsNullOrWhiteSpace(i.CreatureType));
+                    if (curseInteraction != null)
+                    {
+                        title += ", was cursed in " + curseInteraction.Year + " at the age of " + _historicalFigure.AgeDuringWorldEvent(curseInteraction) + " to become a " + curseInteraction.CreatureType;
+                        if (curseInteraction.Doer != null) {
+                            title += " thanks to " + curseInteraction.Doer.ToLink();
+                        }
+                    }
+                }
+
                 if (_historicalFigure.DeathYear > 0)
                 {
                     HfDied death = _historicalFigure.Events.OfType<HfDied>().First(hfDeath => hfDeath.HistoricalFigure == _historicalFigure);

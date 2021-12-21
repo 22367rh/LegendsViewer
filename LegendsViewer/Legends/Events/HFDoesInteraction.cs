@@ -16,6 +16,8 @@ namespace LegendsViewer.Legends.Events
         public WorldRegion Region { get; set; }
         public Site Site { get; set; }
 
+        public string CreatureType { get; set; }
+
         public HfDoesInteraction(List<Property> properties, World world)
             : base(properties, world)
         {
@@ -36,9 +38,9 @@ namespace LegendsViewer.Legends.Events
                 }
             }
 
+            CreatureType = "";
             if (Target != null)
             {
-                string creatureType = "";
                 if (!string.IsNullOrWhiteSpace(Interaction))
                 {
                     if (!Target.ActiveInteractions.Contains(Interaction))
@@ -53,31 +55,38 @@ namespace LegendsViewer.Legends.Events
 
                     if (Interaction.Contains("VAMPIRE"))
                     {
-                        creatureType = "vampire";
+                        CreatureType = "vampire";
                     }
                     if (Interaction.Contains("WEREBEAST"))
                     {
-                        creatureType = "werebeast";
+                        CreatureType = "werebeast";
                     }
                     if (Interaction.Contains("SECRET"))
                     {
-                        creatureType = "necromancer";
+                        CreatureType = "necromancer";
                     }
                     if (Interaction.Contains("ANIMATE"))
                     {
-                        creatureType = "animated corpse";
+                        CreatureType = "animated corpse";
                     }
                     if (Interaction.Contains("UNDEAD_RES"))
                     {
-                        creatureType = "resurrected undead";
+                        CreatureType = "resurrected undead";
+                    }
+                }
+                if (!string.IsNullOrWhiteSpace(InteractionAction) && InteractionAction.Contains("bit, passing on the "))
+                {
+                    if (!string.IsNullOrEmpty(Target.Interaction))
+                    {
+                        CreatureType = "were" + Target.Interaction.Replace(" monster curse", " ");
                     }
                 }
                 if (!string.IsNullOrWhiteSpace(InteractionAction) && InteractionAction.Contains(", passing on the "))
                 {
-                    Target.Interaction = InteractionAction.Replace(", passing on the ", "");
+                    Target.Interaction = InteractionAction.Replace("bit, passing on the ", "").Replace(", passing on the ", "");
                     if (!string.IsNullOrEmpty(Target.Interaction))
                     {
-                        creatureType = "were" + Target.Interaction.Replace(" monster curse", " ");
+                        CreatureType = "were" + Target.Interaction.Replace(" monster curse", " ");
                     }
                 }
                 else if (!string.IsNullOrWhiteSpace(InteractionString) && InteractionString.Contains(" to assume the form of a "))
@@ -85,15 +94,16 @@ namespace LegendsViewer.Legends.Events
                     Target.Interaction = InteractionString.Replace(" to assume the form of a ", "").Replace("-like", "").Replace(" every full moon", " curse");
                     if (!string.IsNullOrEmpty(Target.Interaction))
                     {
-                        creatureType = "were" + Target.Interaction.Replace(" monster curse"," ");
+                        CreatureType = "were" + Target.Interaction.Replace(" monster curse"," ");
                     }
                 }
 
-                if (!string.IsNullOrEmpty(creatureType))
+                if (!string.IsNullOrEmpty(CreatureType))
                 {
-                    Target.CreatureTypes.Add(new HistoricalFigure.CreatureType(creatureType, this));
+                    Target.CreatureTypes.Add(new HistoricalFigure.CreatureType(CreatureType, this));
                 }
             }
+
             Doer.AddEvent(this);
             Target.AddEvent(this);
             Region.AddEvent(this);
@@ -107,20 +117,20 @@ namespace LegendsViewer.Legends.Events
             if (InteractionString == "")
             {
                 eventString += " bit ";
-                eventString += Target.ToLink(link, pov, this);
-                eventString += !string.IsNullOrWhiteSpace(InteractionAction) ? InteractionAction : ", passing on the " + Interaction + " ";
+                eventString += " " + Target.ToLink(link, pov, this) + " ";
+                eventString += " " + (!string.IsNullOrWhiteSpace(InteractionAction) ? InteractionAction : ", passing on the " + Interaction);
             }
             else
             {
-                eventString += !string.IsNullOrWhiteSpace(InteractionAction) ? InteractionAction : " put " + Interaction + " on ";
-                eventString += Target.ToLink(link, pov, this);
-                eventString += !string.IsNullOrWhiteSpace(InteractionString) ? InteractionString : "";
+                eventString += " " + (!string.IsNullOrWhiteSpace(InteractionAction) ? " " + InteractionAction : " put " + Interaction + " on ");
+                eventString += " " + Target.ToLink(link, pov, this) + " ";
+                eventString += " " + (!string.IsNullOrWhiteSpace(InteractionString) ? InteractionString : "");
             }
             eventString += " in ";
-            eventString += Site != null ? Site.ToLink(link, pov, this) : "UNKNOWN SITE";
-            eventString += PrintParentCollection(link, pov);
+            eventString += Site != null ? " " + Site.ToLink(link, pov, this) : " UNKNOWN SITE ";
+            eventString += " " + PrintParentCollection(link, pov);
             eventString += ".";
-            return eventString;
+            return eventString.Replace("  ", " ");
         }
     }
 }

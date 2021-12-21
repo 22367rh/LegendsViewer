@@ -171,7 +171,7 @@ namespace LegendsViewer.Legends.Events
                 {
                     collectionString += " as part of ";
                 }
-                collectionString += parent.ToLink(link, pov, this);
+                collectionString += " " + parent.ToLink(link, pov, this);
                 parent = parent.ParentCollection;
             }
             return " during " + collectionString;
