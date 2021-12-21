@@ -16,6 +16,8 @@ namespace LegendsViewer.Controls.Map
 {
     public class MapPanel : Panel
     {
+        protected readonly string[] ImageFileTypes = { ".bmp", ".png", ".jpg", ".jpeg" };
+
         public DwarfTabControl TabControl;
         Bitmap _map, _minimap;
         public Bitmap AlternateMap, Overlay;
@@ -1109,28 +1111,25 @@ namespace LegendsViewer.Controls.Map
             openMap.ShowDialog();
             string fileName;
             bool deleteFile = false;
-            if (openMap.FileName != "" && !openMap.FileName.EndsWith(".bmp") && !openMap.FileName.EndsWith(".png") && !openMap.FileName.EndsWith(".jpeg") && !openMap.FileName.EndsWith(".jpg"))
+            if (openMap.FileName != "" && !openMap.FileName.EndsWith(ImageFileTypes))
             {
                 deleteFile = true;
                 using (SevenZipExtractor extractor = new SevenZipExtractor(openMap.FileName))
                 {
-                    if (extractor.ArchiveFileNames.Count(file => file.EndsWith(".bmp") || file.EndsWith(".png") || file.EndsWith(".jpg") || file.EndsWith(".jpeg")) == 0)
+                    if (extractor.ArchiveFileNames.Count(file => file.EndsWith(ImageFileTypes)) == 0)
                     {
                         MessageBox.Show("No Image Files Found");
                         return;
                     }
-                    if (extractor.ArchiveFileNames.Count(file => file.EndsWith(".bmp") || file.EndsWith(".png") || file.EndsWith(".jpg") || file.EndsWith(".jpeg")) == 1)
+                    if (extractor.ArchiveFileNames.Count(file => file.EndsWith(ImageFileTypes)) == 1)
                     {
-                        fileName = extractor.ArchiveFileNames.Single(file => file.EndsWith(".bmp") || file.EndsWith(".png") || file.EndsWith(".jpg") || file.EndsWith(".jpeg"));
+                        fileName = extractor.ArchiveFileNames.Single(file => file.EndsWith(ImageFileTypes));
                     }
                     else
                     {
-                        DlgFileSelect fileSelect = new DlgFileSelect(extractor.ArchiveFileNames.Where(file => file.EndsWith(".bmp") || file.EndsWith(".png") || file.EndsWith(".jpg") || file.EndsWith(".jpeg")).ToList());
+                        DlgFileSelect fileSelect = new DlgFileSelect(extractor.ArchiveFileNames.Where(file => file.EndsWith(ImageFileTypes)).ToList());
                         fileSelect.ShowDialog();
-                        if (fileSelect.SelectedFile == "")
-                        {
-                            return;
-                        }
+                        if (fileSelect.SelectedFile == "") return;
 
                         if (File.Exists(fileSelect.SelectedFile)) { MessageBox.Show(fileSelect.SelectedFile + " already exists."); return; }
                         fileName = fileSelect.SelectedFile;
@@ -1312,7 +1311,7 @@ namespace LegendsViewer.Controls.Map
         protected override void OnMouseUp(MouseEventArgs e)
         {
             if (e.Location.X > MouseClickLocation.X - 5 && e.Location.X < MouseClickLocation.X + 5
-                && e.Location.Y > MouseClickLocation.Y - 5 && e.Location.Y < MouseClickLocation.Y + 5)//	e.Location == MouseClickLocation)
+                && e.Location.Y > MouseClickLocation.Y - 5 && e.Location.Y < MouseClickLocation.Y + 5)  //	e.Location == MouseClickLocation)
             {
                 if (_controlMenu.SelectedOption != null)
                 {

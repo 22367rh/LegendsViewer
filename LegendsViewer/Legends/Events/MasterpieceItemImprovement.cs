@@ -72,7 +72,7 @@ namespace LegendsViewer.Legends.Events
                     break;
                 default:
                     eventString += " added masterful ";
-                    if (!string.IsNullOrWhiteSpace(ImprovementSubType) && ImprovementSubType != "-1")
+                    if (ImprovementSubType.IsNotNullOrWhiteSpace() && ImprovementSubType != "-1")
                     {
                         eventString += ImprovementSubType;
                     }
@@ -83,16 +83,16 @@ namespace LegendsViewer.Legends.Events
                     break;
             }
             eventString += " in ";
-            eventString += !string.IsNullOrWhiteSpace(ImprovementMaterial) ? ImprovementMaterial + " " : "";
+            eventString += ImprovementMaterial.IsNotNullOrWhiteSpace() ? ImprovementMaterial + " " : "";
             eventString += " to a ";
-            eventString += !string.IsNullOrWhiteSpace(Material) ? Material + " " : "";
-            if (!string.IsNullOrWhiteSpace(ItemSubType) && ItemSubType != "-1")
+            eventString += Material.IsNotNullOrWhiteSpace() ? Material + " " : "";
+            if (ItemSubType.IsNotNullOrWhiteSpace() && ItemSubType != "-1")
             {
                 eventString += ItemSubType;
             }
             else
             {
-                eventString += !string.IsNullOrWhiteSpace(ItemType) ? ItemType : "UNKNOWN ITEM";
+                eventString += ItemType.IsNotNullOrWhiteSpace() ? ItemType : "UNKNOWN ITEM";
             }
             eventString += " for ";
             eventString += ImproverEntity != null ? ImproverEntity.ToLink(link, pov, this) : "UNKNOWN ENTITY";

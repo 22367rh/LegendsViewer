@@ -20,6 +20,7 @@ namespace LegendsViewer.Controls.HTML
         protected StringBuilder Html;
         protected const string LineBreak = "</br>";
         protected const string ListItem = "<li>";
+        protected readonly string[] ImageFileTypes = { ".bmp", ".png", ".jpg", ".jpeg" };
 
         protected HtmlPrinter()
         {
@@ -353,23 +354,17 @@ namespace LegendsViewer.Controls.HTML
         protected string GetHtmlColorByEntity(Entity entity)
         {
             string htmlColor = ColorTranslator.ToHtml(entity.LineColor);
-            if (string.IsNullOrEmpty(htmlColor) && entity.Parent != null)
+            if (htmlColor.IsNullOrEmpty() && entity.Parent != null)
             {
                 htmlColor = GetHtmlColorByEntity(entity.Parent);
             }
-            if (string.IsNullOrEmpty(htmlColor))
-            {
-                htmlColor = "#888888";
-            }
-            return htmlColor;
+            return htmlColor.IsNullOrEmpty() ? "#888888" : htmlColor;
         }
 
         protected void PrintPopulations(List<Population> populations)
         {
-            if (!populations.Any())
-            {
-                return;
-            }
+            if (!populations.Any()) return;
+
             Html.AppendLine("<div class=\"col-lg-4 col-md-6 col-sm-12\">");
             var mainRacePops = new List<Population>();
             var animalPeoplePops = new List<Population>();
@@ -437,10 +432,8 @@ namespace LegendsViewer.Controls.HTML
 
         private void AddPopulationList(List<Population> populations, string populationName)
         {
-            if (!populations.Any())
-            {
-                return;
-            }
+            if (!populations.Any()) return;
+
             Html.AppendLine($"<b>{populationName}</b></br>");
             Html.AppendLine("<ul>");
             foreach (Population population in populations)
@@ -498,10 +491,7 @@ namespace LegendsViewer.Controls.HTML
 
         protected void PrintEventLog(World world, List<WorldEvent> events, List<string> filters, DwarfObject dfo)
         {
-            if (!events.Any())
-            {
-                return;
-            }
+            if (!events.Any()) return;
 
             var chartLabels = new List<string>();
             var eventDataSet = new List<string>();
@@ -557,12 +547,9 @@ namespace LegendsViewer.Controls.HTML
             Html.AppendLine("<script>");
             Html.AppendLine("$(document).ready(function() {");
             Html.AppendLine("   var dataSet = [");
-            foreach (var e in events.OrderBy(e => e.Year).ThenBy(e => e.Id))
+            foreach (var e in events.Where(evt => filters == null || !filters.Contains(evt.Type)).OrderBy(e => e.Year).ThenBy(e => e.Id))
             {
-                if (filters == null || !filters.Contains(e.Type))
-                {
-                    Html.AppendLine("['" + e.Date + "','" + e.Print(true, dfo).Replace("'", "`") + "','" + e.Type + "'],");
-                }
+                Html.AppendLine("['" + e.Date + "','" + e.Print(true, dfo).Replace("'", "`") + "','" + e.Type + "'],");
             }
 
             Html.AppendLine("   ];");

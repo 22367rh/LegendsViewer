@@ -68,7 +68,7 @@ namespace LegendsViewer.Legends.Events
 
             Trickster.AddEvent(this);
             Target.AddEvent(this);
-            if (!string.IsNullOrEmpty(IdentityName))
+            if (IdentityName.IsNotNullOrEmpty())
             {
                 Identity = new Identity(IdentityName, IdentityRace, IdentityCaste);
             }

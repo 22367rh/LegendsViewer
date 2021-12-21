@@ -30,7 +30,7 @@ namespace LegendsViewer.Controls.HTML
         public override string Print()
         {
             Html = new StringBuilder();
-            string title = string.IsNullOrWhiteSpace(_era.Name) ? "" : _era.Name + " ";
+            string title = _era.Name.IsNullOrWhiteSpace() ? "" : _era.Name + " ";
             string timespan = "(" + _era.StartYear + " - " + _era.EndYear + ")";
             Html.AppendLine("<h1>" + title + timespan + "</h1></br></br>");
 

@@ -37,7 +37,7 @@ namespace LegendsViewer.Legends.EventCollections
 
         public override string ToLink(bool link = true, DwarfObject pov = null, WorldEvent worldEvent = null)
         {
-            return "a "+(!string.IsNullOrWhiteSpace(Adjective) ? Adjective.ToLower()+" " : "")+"purge";
+            return "a "+(Adjective.IsNotNullOrWhiteSpace() ? Adjective.ToLower()+" " : "")+"purge";
         }
     }
 }

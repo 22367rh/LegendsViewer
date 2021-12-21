@@ -47,7 +47,7 @@ namespace LegendsViewer.Controls.Tabs
             base.AfterLoad(world);
             _entitySearch = new EntitiesList(World);
 
-            var civRaces = from civ in World.Entities.Where(entity => !string.IsNullOrWhiteSpace(entity.Name))
+            var civRaces = from civ in World.Entities.Where(entity => entity.Name.IsNotNullOrWhiteSpace())
                            orderby civ.Race.NamePlural
                            group civ by civ.Race into civRace
                            select civRace;

@@ -37,11 +37,11 @@ namespace LegendsViewer.Legends
             string positionName;
             if (isSpouse)
             {
-                if (caste == "Female" && !string.IsNullOrEmpty(SpouseFemale))
+                if (caste.EqualsIgnoreCase("Female") && SpouseFemale.IsNotNullOrEmpty())
                 {
                     positionName = SpouseFemale;
                 }
-                else if (caste == "Male" && !string.IsNullOrEmpty(SpouseMale))
+                else if (caste.EqualsIgnoreCase("Male") && SpouseMale.IsNotNullOrEmpty())
                 {
                     positionName = SpouseMale;
                 }
@@ -52,11 +52,11 @@ namespace LegendsViewer.Legends
             }
             else
             {
-                if (caste == "Female" && !string.IsNullOrEmpty(NameFemale))
+                if (caste.EqualsIgnoreCase("Female") && NameFemale.IsNotNullOrEmpty())
                 {
                     positionName = NameFemale;
                 }
-                else if (caste == "Male" && !string.IsNullOrEmpty(NameMale))
+                else if (caste.EqualsIgnoreCase("Male") && NameMale.IsNotNullOrEmpty())
                 {
                     positionName = NameMale;
                 }

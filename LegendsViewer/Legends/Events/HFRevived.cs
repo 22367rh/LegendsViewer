@@ -65,7 +65,7 @@ namespace LegendsViewer.Legends.Events
             }
 
 
-            if (!string.IsNullOrWhiteSpace(_ghost))
+            if (_ghost.IsNotNullOrWhiteSpace())
             {
                 if (RaisedBefore)
                 {

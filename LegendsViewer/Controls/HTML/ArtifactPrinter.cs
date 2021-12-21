@@ -20,21 +20,21 @@ namespace LegendsViewer.Controls.HTML
         {
             Html = new StringBuilder();
             Html.AppendLine("<h1>" + _artifact.GetIcon() + " " + _artifact.Name);
-            if (!string.IsNullOrWhiteSpace(_artifact.Item) && _artifact.Name != _artifact.Item)
+            if (_artifact.Item.IsNotNullOrWhiteSpace() && _artifact.Name != _artifact.Item)
             {
                 Html.AppendLine(" \"" + _artifact.Item + "\"");
             }
             Html.AppendLine("</h1>");
-            if (!string.IsNullOrWhiteSpace(_artifact.Type) && _artifact.Type != "Unknown")
+            if (_artifact.Type.IsNotNullOrWhiteSpace() && _artifact.Type != "Unknown")
             {
                 Html.AppendLine("<b>" + _artifact.Name + " was a legendary " + _artifact.Material + " ");
-                Html.AppendLine((!string.IsNullOrWhiteSpace(_artifact.SubType) ? _artifact.SubType : _artifact.Type.ToLower()) + ".</b><br />");
+                Html.AppendLine((_artifact.SubType.IsNotNullOrWhiteSpace() ? _artifact.SubType : _artifact.Type.ToLower()) + ".</b><br />");
             }
             else
             {
                 Html.AppendLine("<b>" + _artifact.Name + " was a legendary item.</b><br />");
             }
-            if (!string.IsNullOrWhiteSpace(_artifact.Description))
+            if (_artifact.Description.IsNotNullOrWhiteSpace())
             {
                 Html.AppendLine("<i>\"" + _artifact.Description + "\"</i><br />");
             }

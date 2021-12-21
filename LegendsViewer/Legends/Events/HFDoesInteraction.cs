@@ -41,7 +41,7 @@ namespace LegendsViewer.Legends.Events
             CreatureType = "";
             if (Target != null)
             {
-                if (!string.IsNullOrWhiteSpace(Interaction))
+                if (Interaction.IsNotNullOrWhiteSpace())
                 {
                     if (!Target.ActiveInteractions.Contains(Interaction))
                     {
@@ -53,52 +53,49 @@ namespace LegendsViewer.Legends.Events
                         Target.LineageCurseParent = Doer;
                     }
 
-                    if (Interaction.Contains("VAMPIRE"))
+                    if (Interaction.ContainsIgnoreCase("VAMPIRE"))
                     {
                         CreatureType = "vampire";
                     }
-                    if (Interaction.Contains("WEREBEAST"))
+                    if (Interaction.ContainsIgnoreCase("WEREBEAST"))
                     {
                         CreatureType = "werebeast";
                     }
-                    if (Interaction.Contains("SECRET"))
+                    if (Interaction.ContainsIgnoreCase("SECRET"))
                     {
                         CreatureType = "necromancer";
                     }
-                    if (Interaction.Contains("ANIMATE"))
+                    if (Interaction.ContainsIgnoreCase("ANIMATE"))
                     {
                         CreatureType = "animated corpse";
                     }
-                    if (Interaction.Contains("UNDEAD_RES"))
+                    if (Interaction.ContainsIgnoreCase("UNDEAD_RES"))
                     {
                         CreatureType = "resurrected undead";
                     }
                 }
-                if (!string.IsNullOrWhiteSpace(InteractionAction) && InteractionAction.Contains("bit, passing on the "))
+                if (InteractionAction.IsNotNullOrWhiteSpace() && InteractionAction.Contains("bit, passing on the ") && Target.Interaction.IsNotNullOrEmpty())
                 {
-                    if (!string.IsNullOrEmpty(Target.Interaction))
-                    {
-                        CreatureType = "were" + Target.Interaction.Replace(" monster curse", " ");
-                    }
+                    CreatureType = "were" + Target.Interaction.Replace(" monster curse", " ");
                 }
-                if (!string.IsNullOrWhiteSpace(InteractionAction) && InteractionAction.Contains(", passing on the "))
+                if (InteractionAction.IsNotNullOrWhiteSpace() && InteractionAction.Contains(", passing on the "))
                 {
                     Target.Interaction = InteractionAction.Replace("bit, passing on the ", "").Replace(", passing on the ", "");
-                    if (!string.IsNullOrEmpty(Target.Interaction))
+                    if (Target.Interaction.IsNotNullOrWhiteSpace())
                     {
                         CreatureType = "were" + Target.Interaction.Replace(" monster curse", " ");
                     }
                 }
-                else if (!string.IsNullOrWhiteSpace(InteractionString) && InteractionString.Contains(" to assume the form of a "))
+                else if (InteractionString.IsNotNullOrWhiteSpace() && InteractionString.Contains(" to assume the form of a "))
                 {
                     Target.Interaction = InteractionString.Replace(" to assume the form of a ", "").Replace("-like", "").Replace(" every full moon", " curse");
-                    if (!string.IsNullOrEmpty(Target.Interaction))
+                    if (Target.Interaction.IsNotNullOrEmpty())
                     {
                         CreatureType = "were" + Target.Interaction.Replace(" monster curse"," ");
                     }
                 }
 
-                if (!string.IsNullOrEmpty(CreatureType))
+                if (CreatureType.IsNotNullOrEmpty())
                 {
                     Target.CreatureTypes.Add(new HistoricalFigure.CreatureType(CreatureType, this));
                 }
@@ -118,13 +115,13 @@ namespace LegendsViewer.Legends.Events
             {
                 eventString += " bit ";
                 eventString += " " + Target.ToLink(link, pov, this) + " ";
-                eventString += " " + (!string.IsNullOrWhiteSpace(InteractionAction) ? InteractionAction : ", passing on the " + Interaction);
+                eventString += " " + (InteractionAction.IsNotNullOrWhiteSpace() ? InteractionAction : ", passing on the " + Interaction);
             }
             else
             {
-                eventString += " " + (!string.IsNullOrWhiteSpace(InteractionAction) ? " " + InteractionAction : " put " + Interaction + " on ");
+                eventString += " " + (InteractionAction.IsNotNullOrWhiteSpace() ? " " + InteractionAction : " put " + Interaction + " on ");
                 eventString += " " + Target.ToLink(link, pov, this) + " ";
-                eventString += " " + (!string.IsNullOrWhiteSpace(InteractionString) ? InteractionString : "");
+                eventString += " " + (InteractionString.IsNotNullOrWhiteSpace() ? InteractionString : "");
             }
             eventString += " in ";
             eventString += Site != null ? " " + Site.ToLink(link, pov, this) : " UNKNOWN SITE ";

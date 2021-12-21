@@ -181,9 +181,9 @@ namespace LegendsViewer.Controls.HTML
                 .Distinct()
                 .OrderBy(entity => entity.Race.NamePlural)
                 .ToList();
-            var entityLabels = string.Join(",", _allEnemies.Where(x => x.Name != _entity.Name).Select(x => $"'{x.Name} - {x.Race.NamePlural}'"));
-            var battleVictorData = string.Join(",", _allEnemies.Where(x => x.Name != _entity.Name).Select(x => $"{allBattles.Count(y => y.Victor == _entity && (y.Attacker?.Name == x.Name || y.Defender?.Name == x.Name))}"));
-            var battleLoserData = string.Join(",", _allEnemies.Where(x => x.Name != _entity.Name).Select(x => $"{allBattles.Count(y => y.Victor != _entity && (y.Attacker?.Name == x.Name || y.Defender?.Name == x.Name))}"));
+            var entityLabels =  _allEnemies.Where(x => x.Name != _entity.Name).Select(x => $"'{x.Name} - {x.Race.NamePlural}'").ToCsv();
+            var battleVictorData =  _allEnemies.Where(x => x.Name != _entity.Name).Select(x => $"{allBattles.Count(y => y.Victor == _entity && (y.Attacker?.Name == x.Name || y.Defender?.Name == x.Name))}").ToCsv();
+            var battleLoserData = _allEnemies.Where(x => x.Name != _entity.Name).Select(x => $"{allBattles.Count(y => y.Victor != _entity && (y.Attacker?.Name == x.Name || y.Defender?.Name == x.Name))}").ToCsv();
 
             var victorColor = "255, 206, 86";
             var loserColor = "153, 102, 255";
@@ -227,10 +227,7 @@ namespace LegendsViewer.Controls.HTML
 
         private void PrintWarfareInfo()
         {
-            if (!_entity.Wars.Any())
-            {
-                return;
-            }
+            if (!_entity.Wars.Any()) return;
 
             Html.AppendLine("<div class=\"row\">");
 
@@ -259,10 +256,7 @@ namespace LegendsViewer.Controls.HTML
 
         private void PrintWarfareGraph()
         {
-            if (!_entity.Wars.Any())
-            {
-                return;
-            }
+            if (!_entity.Wars.Any()) return;
 
             List<string> nodes = new List<string>();
             Dictionary<string, int> edges = new Dictionary<string, int>();
@@ -315,7 +309,6 @@ namespace LegendsViewer.Controls.HTML
             Html.AppendLine(Bold("Battles against other Entities - Sum of battles - Graph") + LineBreak);
             Html.AppendLine("<div id=\"warfaregraph\" class=\"legends_graph\"></div>");
             Html.AppendLine("</div>");
-
 
             Html.AppendLine("<script type=\"text/javascript\" src=\"" + LocalFileProvider.LocalPrefix + "WebContent/scripts/cytoscape.min.js\"></script>");
             Html.AppendLine("<script>");
@@ -449,7 +442,7 @@ namespace LegendsViewer.Controls.HTML
 
                         Html.Append("<li>").Append(assignment.HistoricalFigure.ToLink()).Append(", ").Append(positionName).AppendLine("</li>");
 
-                        if (!string.IsNullOrEmpty(position.Spouse))
+                        if (position.Spouse.IsNotNullOrEmpty())
                         {
                             HistoricalFigureLink spouseLink = assignment.HistoricalFigure.RelatedHistoricalFigures.FirstOrDefault(hfLink => hfLink.Type == HistoricalFigureLinkType.Spouse);
                             if (spouseLink != null)
@@ -476,17 +469,7 @@ namespace LegendsViewer.Controls.HTML
                 StartList(ListType.Unordered);
                 foreach (HistoricalFigure worship in _entity.Worshiped)
                 {
-                    string associations = "";
-                    foreach (string association in worship.Spheres)
-                    {
-                        if (associations.Length > 0)
-                        {
-                            associations += ", ";
-                        }
-
-                        associations += association;
-                    }
-                    Html.AppendLine(ListItem + worship.ToLink() + " (" + associations + ")");
+                    Html.AppendLine(ListItem + worship.ToLink() + " (" + worship.Spheres.ToSpacedCsv() + ")");
                 }
                 EndList(ListType.Unordered);
             }
@@ -501,42 +484,22 @@ namespace LegendsViewer.Controls.HTML
                 foreach (War war in _entity.Wars.Where(war => !_world.FilterBattles || war.Notable))
                 {
                     warTable.StartRow();
-                    string endString;
-                    if (war.EndYear == -1)
-                    {
-                        endString = "Present";
-                    }
-                    else
-                    {
-                        endString = war.EndYear.ToString();
-                    }
+                    string endString = war.EndYear == -1 ? "Present" : war.EndYear.ToString();
 
                     warTable.AddData(war.StartYear + " - " + endString);
                     warTable.AddData(war.ToLink());
 
-                    if (war.Attacker == _entity)
+                    if (war.Attacker == _entity || war.Attacker.Parent == _entity)
                     {
                         warTable.AddData("waged against");
                         warTable.AddData(war.Defender.PrintEntity(), 0);
-                        warTable.AddData("");
+                        warTable.AddData(war.Attacker.Parent == _entity ? "by " + war.Attacker.ToLink() : "");
                     }
-                    else if (war.Attacker.Parent == _entity)
-                    {
-                        warTable.AddData("waged against");
-                        warTable.AddData(war.Defender.PrintEntity(), 0);
-                        warTable.AddData("by " + war.Attacker.ToLink());
-                    }
-                    else if (war.Defender == _entity)
+                    else if (war.Defender == _entity || war.Defender.Parent == _entity)
                     {
                         warTable.AddData("defended against");
                         warTable.AddData(war.Attacker.PrintEntity(), 0);
-                        warTable.AddData("");
-                    }
-                    else if (war.Defender.Parent == _entity)
-                    {
-                        warTable.AddData("defended against");
-                        warTable.AddData(war.Attacker.PrintEntity(), 0);
-                        warTable.AddData("by " + war.Defender.ToLink());
+                        warTable.AddData(war.Defender.Parent == _entity ? "by " + war.Defender.ToLink() : "");
                     }
 
                     int battleVictories = 0, battleLossses = 0, sitesDestroyed = 0, sitesLost = 0, kills, losses;

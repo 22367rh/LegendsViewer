@@ -70,7 +70,7 @@ namespace LegendsViewer.Legends.Events
                     eventString += " of ";
                     eventString += Civ != null ? Civ.ToLink(link, pov, this) : "UNKNOWN CIV";
                     eventString += " created the position of ";
-                    eventString += !string.IsNullOrWhiteSpace(Position) ? Position : "UNKNOWN POSITION";
+                    eventString += Position.IsNotNullOrWhiteSpace() ? Position : "UNKNOWN POSITION";
                     eventString += " through force of argument";
                     break;
                 case ReasonForCreatingEntity.ThreatOfViolence:
@@ -78,20 +78,20 @@ namespace LegendsViewer.Legends.Events
                     eventString += " of ";
                     eventString += Civ != null ? Civ.ToLink(link, pov, this) : "UNKNOWN CIV";
                     eventString += " compelled the creation of the position of ";
-                    eventString += !string.IsNullOrWhiteSpace(Position) ? Position : "UNKNOWN POSITION";
+                    eventString += Position.IsNotNullOrWhiteSpace() ? Position : "UNKNOWN POSITION";
                     eventString += " with threats of violence";
                     break;
                 case ReasonForCreatingEntity.Collaboration:
                     eventString += SiteCiv != null ? SiteCiv.ToLink(link, pov, this) : "UNKNOWN ENTITY";
                     eventString += " collaborated to create the position of ";
-                    eventString += !string.IsNullOrWhiteSpace(Position) ? Position : "UNKNOWN POSITION";
+                    eventString += Position.IsNotNullOrWhiteSpace() ? Position : "UNKNOWN POSITION";
                     break;
                 case ReasonForCreatingEntity.WaveOfPopularSupport:
                     eventString += HistoricalFigure != null ? HistoricalFigure.ToLink(link, pov, this) : "UNKNOWN HISTORICAL FIGURE";
                     eventString += " of ";
                     eventString += Civ != null ? Civ.ToLink(link, pov, this) : "UNKNOWN CIV";
                     eventString += " created the position of ";
-                    eventString += !string.IsNullOrWhiteSpace(Position) ? Position : "UNKNOWN POSITION";
+                    eventString += Position.IsNotNullOrWhiteSpace() ? Position : "UNKNOWN POSITION";
                     eventString += ", pushed by a wave of popular support";
                     break;
                 case ReasonForCreatingEntity.AsAMatterOfCourse:
@@ -99,7 +99,7 @@ namespace LegendsViewer.Legends.Events
                     eventString += " of ";
                     eventString += Civ != null ? Civ.ToLink(link, pov, this) : "UNKNOWN CIV";
                     eventString += " created the position of ";
-                    eventString += !string.IsNullOrWhiteSpace(Position) ? Position : "UNKNOWN POSITION";
+                    eventString += Position.IsNotNullOrWhiteSpace() ? Position : "UNKNOWN POSITION";
                     eventString += " as a matter of course";
                     break;
             }

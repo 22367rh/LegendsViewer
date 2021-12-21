@@ -89,7 +89,7 @@ namespace LegendsViewer.Legends.Events
                 {
                     eventString += DefenderTactician.ToLink(link, pov, this);
                 }
-                if (Situation.ToString().Contains("Strongly"))
+                if (Situation.ToString().ContainsIgnoreCase("Strongly"))
                 {
                     eventString += " entirely outwitted ";
                 }

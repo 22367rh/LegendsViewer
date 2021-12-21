@@ -41,12 +41,12 @@ namespace LegendsViewer.Controls.HTML
             Html.AppendLine("<div class=\"row\">");
 
             string siteMapPath = GetSiteMapPath();
-            string colClassMaps = string.IsNullOrEmpty(siteMapPath) ? "col-md-6 col-sm-12" : "col-lg-9 col-md-12 col-sm-12";
+            string colClassMaps = siteMapPath.IsNullOrEmpty() ? "col-md-6 col-sm-12" : "col-lg-9 col-md-12 col-sm-12";
             Html.AppendLine("<div class=\"" + colClassMaps + "\">");
             PrintMaps(siteMapPath);
             Html.AppendLine("</div>");
 
-            string colClassChart = string.IsNullOrEmpty(siteMapPath) ? "col-md-3 col-sm-12" : "col-lg-3 col-md-6 col-sm-6";
+            string colClassChart = siteMapPath.IsNullOrEmpty() ? "col-md-3 col-sm-12" : "col-lg-3 col-md-6 col-sm-6";
             Html.AppendLine("<div id=\"chart-populationbyrace-container\" class=\"" + colClassChart + "\" style=\"height: 250px\">");
             Html.AppendLine("<canvas id=\"chart-populationbyrace\"></canvas>");
             Html.AppendLine("</div>");
@@ -88,30 +88,27 @@ namespace LegendsViewer.Controls.HTML
             Html.AppendLine("<div class=\"col-md-12\">");
             Html.AppendLine(Bold("Related Historical Figures") + LineBreak);
             StartList(ListType.Unordered);
-            foreach (HistoricalFigure hf in _site.RelatedHistoricalFigures)
+            foreach (HistoricalFigure hf in _site.RelatedHistoricalFigures.Where(hf => hf.RelatedSites.Any(link => link.Site == _site)))
             {
-                SiteLink hfToSiteLink = hf.RelatedSites.FirstOrDefault(link => link.Site == _site);
-                if (hfToSiteLink != null)
+                SiteLink hfToSiteLink = hf.RelatedSites.First(link => link.Site == _site);
+                Html.AppendLine(ListItem + hf.ToLink(true, _site));
+                if (hfToSiteLink.SubId != 0)
                 {
-                    Html.AppendLine(ListItem + hf.ToLink(true, _site));
-                    if (hfToSiteLink.SubId != 0)
+                    Structure structure = _site.Structures.FirstOrDefault(s => s.Id == hfToSiteLink.SubId);
+                    if (structure != null)
                     {
-                        Structure structure = _site.Structures.FirstOrDefault(s => s.Id == hfToSiteLink.SubId);
-                        if (structure != null)
-                        {
-                            Html.AppendLine(" - " + structure.ToLink(true, _site) + " - ");
-                        }
+                        Html.AppendLine(" - " + structure.ToLink(true, _site) + " - ");
                     }
-                    if (hfToSiteLink.OccupationId != 0)
-                    {
-                        Structure structure = _site.Structures.FirstOrDefault(s => s.Id == hfToSiteLink.OccupationId);
-                        if (structure != null)
-                        {
-                            Html.AppendLine(" - " + structure.ToLink(true, _site) + " - ");
-                        }
-                    }
-                    Html.AppendLine(" (" + hfToSiteLink.Type.GetDescription() + ")");
                 }
+                if (hfToSiteLink.OccupationId != 0)
+                {
+                    Structure structure = _site.Structures.FirstOrDefault(s => s.Id == hfToSiteLink.OccupationId);
+                    if (structure != null)
+                    {
+                        Html.AppendLine(" - " + structure.ToLink(true, _site) + " - ");
+                    }
+                }
+                Html.AppendLine(" (" + hfToSiteLink.Type.GetDescription() + ")");
             }
             EndList(ListType.Unordered);
             Html.AppendLine("</div>");
@@ -141,10 +138,9 @@ namespace LegendsViewer.Controls.HTML
                 .Union(stolenArtifacts)
                 .Distinct()
                 .ToList();
-            if (relatedArtifacts.Count == 0)
-            {
-                return;
-            }
+            
+            if (!relatedArtifacts.Any()) return;
+
             Html.AppendLine("<div class=\"row\">");
             Html.AppendLine("<div class=\"col-md-12\">");
             Html.AppendLine(Bold("Related Artifacts") + LineBreak);
@@ -152,10 +148,10 @@ namespace LegendsViewer.Controls.HTML
             foreach (Artifact artifact in relatedArtifacts)
             {
                 Html.AppendLine(ListItem + artifact.ToLink(true, _site));
-                if (!string.IsNullOrWhiteSpace(artifact.Type))
+                if (artifact.Type.IsNotNullOrWhiteSpace())
                 {
                     Html.AppendLine(" a legendary " + artifact.Material + " ");
-                    Html.AppendLine(!string.IsNullOrWhiteSpace(artifact.SubType) ? artifact.SubType : artifact.Type.ToLower());
+                    Html.AppendLine(artifact.SubType.IsNotNullOrWhiteSpace() ? artifact.SubType : artifact.Type.ToLower());
                 }
                 List<string> relations = new List<string>();
                 if (createdArtifacts.Contains(artifact))
@@ -251,16 +247,8 @@ namespace LegendsViewer.Controls.HTML
                     {
                         ownerString = ownerPeriod.Owner.PrintEntity();
                     }
-                    string startYear;
-                    if (ownerPeriod.StartYear == -1)
-                    {
-                        startYear = "a time before time";
-                    }
-                    else
-                    {
-                        startYear = ownerPeriod.StartYear.ToString();
-                    }
 
+                    string startYear = ownerPeriod.StartYear == -1 ? "a time before time" : ownerPeriod.StartYear.ToString();
                     Html.Append("<li>" + ownerString + ", " + ownerPeriod.StartCause + " " + _site.ToLink(true, _site));
 
                     if (ownerPeriod.Founder != null && ownerPeriod.Owner != null)
@@ -324,17 +312,10 @@ namespace LegendsViewer.Controls.HTML
                     {
                         Battle battle = warfare as Battle;
                         Html.Append(battle.Attacker?.PrintEntity() + "</td>");
-                        if (battle.Victor == battle.Attacker)
-                        {
-                            Html.AppendLine("<td>(V)</td>");
-                        }
-                        else
-                        {
-                            Html.AppendLine("<td></td>");
-                        }
-
+                        Html.AppendLine("<td>" + (battle.Victor == battle.Attacker ? "(V)" : "") + "</td>");
                         Html.AppendLine("<td>(Deaths: " + (battle.AttackerDeathCount + battle.DefenderDeathCount) + ")</td>");
                     }
+
                     if (warfare.GetType() == typeof(SiteConquered))
                     {
                         Html.Append((warfare as SiteConquered).Attacker.PrintEntity() + "</td>");
@@ -361,60 +342,58 @@ namespace LegendsViewer.Controls.HTML
 
         private void PrintStructures()
         {
-            if (_site.Structures.Any())
+            if (!_site.Structures.Any()) return;
+
+            Html.AppendLine("<div class=\"row\">");
+            Html.AppendLine("<div class=\"col-md-12\">");
+            Html.AppendLine("<b>Structures</b><br/>");
+            Html.AppendLine("<ul>");
+            foreach (Structure structure in _site.Structures)
             {
-                Html.AppendLine("<div class=\"row\">");
-                Html.AppendLine("<div class=\"col-md-12\">");
-                Html.AppendLine("<b>Structures</b><br/>");
-                Html.AppendLine("<ul>");
-                foreach (Structure structure in _site.Structures)
-                {
-                    Html.AppendLine("<li>" + structure.ToLink() + ", ");
-                    Html.AppendLine(structure.TypeAsString);
-                    Html.AppendLine("</li>");
-                }
-                Html.AppendLine("</ul>");
-                Html.AppendLine("</div>");
-                Html.AppendLine("</div>");
+                Html.AppendLine("<li>" + structure.ToLink() + ", ");
+                Html.AppendLine(structure.TypeAsString);
+                Html.AppendLine("</li>");
             }
+            Html.AppendLine("</ul>");
+            Html.AppendLine("</div>");
+            Html.AppendLine("</div>");
         }
 
         private void PrintSiteProperties()
         {
-            if (_site.SiteProperties.Any())
-            {
-                Html.AppendLine("<div class=\"row\">");
-                Html.AppendLine("<div class=\"col-md-12\">");
-                Html.AppendLine("<b>Site Properties</b><br/>");
-                Html.AppendLine("<ul>");
-                foreach (SiteProperty siteProperty in _site.SiteProperties)
-                {
-                    Html.AppendLine("<li>");
-                    if (siteProperty.Structure != null)
-                    {
-                        Html.AppendLine(siteProperty.Structure.Type.GetDescription());
-                        Html.AppendLine(" (" + siteProperty.Structure.ToLink() + ")");
-                    }
-                    else if (siteProperty.Type != SitePropertyType.Unknown)
-                    {
-                        Html.AppendLine(siteProperty.Type.GetDescription());
-                    }
-                    else
-                    {
-                        Html.AppendLine("Property");
-                    }
-                    if (siteProperty.Owner != null)
-                    {
-                        Html.AppendLine(", ");
-                        Html.AppendLine(siteProperty.Owner.ToLink());
-                    }
+            if (!_site.SiteProperties.Any()) return;
 
-                    Html.AppendLine("</li>");
+            Html.AppendLine("<div class=\"row\">");
+            Html.AppendLine("<div class=\"col-md-12\">");
+            Html.AppendLine("<b>Site Properties</b><br/>");
+            Html.AppendLine("<ul>");
+            foreach (SiteProperty siteProperty in _site.SiteProperties)
+            {
+                Html.AppendLine("<li>");
+                if (siteProperty.Structure != null)
+                {
+                    Html.AppendLine(siteProperty.Structure.Type.GetDescription());
+                    Html.AppendLine(" (" + siteProperty.Structure.ToLink() + ")");
                 }
-                Html.AppendLine("</ul>");
-                Html.AppendLine("</div>");
-                Html.AppendLine("</div>");
+                else if (siteProperty.Type != SitePropertyType.Unknown)
+                {
+                    Html.AppendLine(siteProperty.Type.GetDescription());
+                }
+                else
+                {
+                    Html.AppendLine("Property");
+                }
+                if (siteProperty.Owner != null)
+                {
+                    Html.AppendLine(", ");
+                    Html.AppendLine(siteProperty.Owner.ToLink());
+                }
+
+                Html.AppendLine("</li>");
             }
+            Html.AppendLine("</ul>");
+            Html.AppendLine("</div>");
+            Html.AppendLine("</div>");
         }
 
         private void PrintGeographyInfo()
@@ -462,7 +441,7 @@ namespace LegendsViewer.Controls.HTML
         {
             Html.AppendLine("<div class=\"row\">");
             Html.AppendLine("<div class=\"col-md-12\">");
-            if (!string.IsNullOrWhiteSpace(_site.Name))
+            if (_site.Name.IsNotNullOrWhiteSpace())
             {
                 Html.AppendLine("<h1>" + _site.GetIcon() + " " + _site.UntranslatedName + ", \"" + _site.Name + "\"</h1>");
                 Html.AppendLine("<b>" + _site.ToLink(false) + " is a " + _site.Type + "</b><br /><br />");
@@ -517,10 +496,8 @@ namespace LegendsViewer.Controls.HTML
 
         private void PrintBeastAttacks()
         {
-            if (_site.BeastAttacks == null || _site.BeastAttacks.Count == 0)
-            {
-                return;
-            }
+            if (_site.BeastAttacks == null || _site.BeastAttacks.Count == 0) return;
+
             Html.AppendLine("<div class=\"col-md-6 col-sm-12\">");
             Html.AppendLine("<b>Beast Attacks</b>");
             Html.AppendLine("<ol>");
@@ -538,55 +515,20 @@ namespace LegendsViewer.Controls.HTML
 
         private string GetSiteMapPath()
         {
-            if (string.IsNullOrEmpty(FileLoader.SaveDirectory) || string.IsNullOrEmpty(FileLoader.RegionId))
-            {
-                return null;
-            }
+            if (FileLoader.SaveDirectory.IsNullOrEmpty() || FileLoader.RegionId.IsNullOrEmpty()) return null;
+
             string sitemapPath = Path.Combine(FileLoader.SaveDirectory, FileLoader.RegionId + "-site_map-" + _site.Id);
             string sitemapPathFromProcessScript = Path.Combine(FileLoader.SaveDirectory, "site_maps\\" + FileLoader.RegionId + "-site_map-" + _site.Id);
-            if (File.Exists(sitemapPath + ".bmp"))
-            {
-                return sitemapPath + ".bmp";
-            }
-
-            if (File.Exists(sitemapPath + ".png"))
-            {
-                return sitemapPath + ".png";
-            }
-            if (File.Exists(sitemapPath + ".jpg"))
-            {
-                return sitemapPath + ".jpg";
-            }
-            if (File.Exists(sitemapPath + ".jpeg"))
-            {
-                return sitemapPath + ".jpeg";
-            }
-            if (File.Exists(sitemapPathFromProcessScript + ".bmp"))
-            {
-                return sitemapPathFromProcessScript + ".bmp";
-            }
-            if (File.Exists(sitemapPathFromProcessScript + ".png"))
-            {
-                return sitemapPathFromProcessScript + ".png";
-            }
-            if (File.Exists(sitemapPathFromProcessScript + ".jpg"))
-            {
-                return sitemapPathFromProcessScript + ".jpg";
-            }
-            if (File.Exists(sitemapPathFromProcessScript + ".jpeg"))
-            {
-                return sitemapPathFromProcessScript + ".jpeg";
-            }
-
-            return null;
+            return ImageFileTypes.Any(ext => File.Exists(sitemapPath + ext))
+                    ? ImageFileTypes.First(ext => File.Exists(sitemapPath + ext))
+                    : ImageFileTypes.Any(ext => File.Exists(sitemapPathFromProcessScript + ext))
+                        ? ImageFileTypes.First(ext => File.Exists(sitemapPathFromProcessScript + ext))
+                        : null;
         }
 
         private void PrintSiteMap(string siteMapPath)
         {
-            if (string.IsNullOrEmpty(siteMapPath))
-            {
-                return;
-            }
+            if (siteMapPath.IsNullOrEmpty()) return;
             CreateSitemapBitmap(siteMapPath);
         }
 

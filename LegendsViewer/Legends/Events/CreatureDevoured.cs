@@ -57,10 +57,10 @@ namespace LegendsViewer.Legends.Events
             {
                 eventString += Victim.ToLink(link, pov, this);
             }
-            else if (!string.IsNullOrWhiteSpace(Race))
+            else if (Race.IsNotNullOrWhiteSpace())
             {
                 eventString += " a ";
-                if (!string.IsNullOrWhiteSpace(Caste))
+                if (Caste.IsNotNullOrWhiteSpace())
                 {
                     eventString += Caste + " ";
                 }

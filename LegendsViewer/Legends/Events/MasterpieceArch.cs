@@ -47,13 +47,13 @@ namespace LegendsViewer.Legends.Events
             eventString += " ";
             eventString += Process;
             eventString += " a masterful ";
-            if (!string.IsNullOrWhiteSpace(BuildingSubType) && BuildingSubType != "-1")
+            if (BuildingSubType.IsNotNullOrWhiteSpace() && BuildingSubType != "-1")
             {
                 eventString += BuildingSubType;
             }
             else
             {
-                eventString += !string.IsNullOrWhiteSpace(BuildingType) ? BuildingType : "UNKNOWN BUILDING";
+                eventString += BuildingType.IsNotNullOrWhiteSpace() ? BuildingType : "UNKNOWN BUILDING";
             }
             eventString += " for ";
             eventString += MakerEntity != null ? MakerEntity.ToLink(link, pov, this) : "UNKNOWN ENTITY";

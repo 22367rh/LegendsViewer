@@ -100,20 +100,14 @@ namespace LegendsViewer.Controls.HTML
                         WorldObject referencedObject = null;
                         switch (reference.Type)
                         {
-                            case ReferenceType.WrittenContent:
-                                referencedObject = _world.GetWrittenContent(reference.ID);
-                                break;
-                            case ReferenceType.PoeticForm:
-                                referencedObject = _world.GetPoeticForm(reference.ID);
-                                break;
-                            case ReferenceType.MusicalForm:
-                                referencedObject = _world.GetMusicalForm(reference.ID);
+                            case ReferenceType.Artifact:
+                                referencedObject = _world.GetArtifact(reference.ID);
                                 break;
                             case ReferenceType.DanceForm:
                                 referencedObject = _world.GetDanceForm(reference.ID);
                                 break;
-                            case ReferenceType.Site:
-                                referencedObject = _world.GetSite(reference.ID);
+                            case ReferenceType.Entity:
+                                referencedObject = _world.GetEntity(reference.ID);
                                 break;
                             case ReferenceType.HistoricalEvent:
                                 WorldEvent worldEvent = _world.GetEvent(reference.ID);
@@ -122,37 +116,34 @@ namespace LegendsViewer.Controls.HTML
                                     Html.AppendLine("<li>" + worldEvent.Print() + "</li>");
                                 }
                                 break;
-                            case ReferenceType.Entity:
-                                referencedObject = _world.GetEntity(reference.ID);
-                                break;
                             case ReferenceType.HistoricalFigure:
                                 referencedObject = _world.GetHistoricalFigure(reference.ID);
                                 break;
-                            case ReferenceType.ValueLevel:
-                                Html.AppendLine("<li>" + reference.Type + ": " + reference.ID + "</li>");
+                            case ReferenceType.MusicalForm:
+                                referencedObject = _world.GetMusicalForm(reference.ID);
                                 break;
-                            case ReferenceType.KnowledgeScholarFlag:
-                                Html.AppendLine("<li>" + reference.Type + ": " + reference.ID + "</li>");
+                            case ReferenceType.PoeticForm:
+                                referencedObject = _world.GetPoeticForm(reference.ID);
                                 break;
-                            case ReferenceType.Interaction:
-                                Html.AppendLine("<li>" + reference.Type + ": " + reference.ID + "</li>");
-                                break;
-                            case ReferenceType.Language:
-                                Html.AppendLine("<li>" + reference.Type + ": " + reference.ID + "</li>");
+                            case ReferenceType.Site:
+                                referencedObject = _world.GetSite(reference.ID);
                                 break;
                             case ReferenceType.Subregion:
                                 referencedObject = _world.GetUndergroundRegion(reference.ID);
                                 break;
+                            case ReferenceType.WrittenContent:
+                                referencedObject = _world.GetWrittenContent(reference.ID);
+                                break;
                             case ReferenceType.AbstractBuilding:
-                                Html.AppendLine("<li>" + reference.Type + ": " + reference.ID + "</li>");
-                                break;
-                            case ReferenceType.Artifact:
-                                referencedObject = _world.GetArtifact(reference.ID);
-                                break;
+                            case ReferenceType.Interaction:
+                            case ReferenceType.KnowledgeScholarFlag:
+                            case ReferenceType.Language:
                             case ReferenceType.Sphere:
+                            case ReferenceType.ValueLevel:
                                 Html.AppendLine("<li>" + reference.Type + ": " + reference.ID + "</li>");
                                 break;
                         }
+
                         if (referencedObject != null)
                         {
                             Html.AppendLine("<li>" + referencedObject.ToLink() + "</li>");

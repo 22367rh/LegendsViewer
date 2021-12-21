@@ -70,9 +70,9 @@ namespace LegendsViewer.Controls.Tabs
                                   group writtenContent by writtenContent.Type.GetDescription() into writtenContentType
                                   select writtenContentType;
 
-            var artifactTypes = World.Artifacts.Select(x => x.Type).SkipWhile(string.IsNullOrEmpty).Distinct().OrderBy(x => x);
+            var artifactTypes = World.Artifacts.Select(x => x.Type).SkipWhile(x => x.IsNullOrEmpty()).Distinct().OrderBy(x => x);
 
-            var artifactMaterials = World.Artifacts.Select(x => string.IsNullOrEmpty(x.Material) ? "" : x.Material).SkipWhile(string.IsNullOrEmpty).Distinct().OrderBy(x => x);
+            var artifactMaterials = World.Artifacts.Select(x => x.Material.IsNullOrEmpty() ? "" : x.Material).SkipWhile(string.IsNullOrEmpty).Distinct().OrderBy(x => x);
 
             cmbWrittenContentType.Items.Add("All"); cmbWrittenContentType.SelectedIndex = 0;
             foreach (var writtencontent in writtencontents)

@@ -50,14 +50,14 @@ namespace LegendsViewer.Legends.Events
             string eventString = GetYearTime();
             eventString += Maker != null ? Maker.ToLink(link, pov, this) : "UNKNOWN HISTORICAL FIGURE";
             eventString += " created a masterful ";
-            eventString += !string.IsNullOrWhiteSpace(Material) ? Material + " " : "";
-            if (!string.IsNullOrWhiteSpace(ItemSubType) && ItemSubType != "-1")
+            eventString += Material.IsNotNullOrWhiteSpace() ? Material + " " : "";
+            if (ItemSubType.IsNotNullOrWhiteSpace() && ItemSubType != "-1")
             {
                 eventString += ItemSubType;
             }
             else
             {
-                eventString += !string.IsNullOrWhiteSpace(ItemType) ? ItemType : "UNKNOWN ITEM";
+                eventString += ItemType.IsNotNullOrWhiteSpace() ? ItemType : "UNKNOWN ITEM";
             }
             eventString += " for ";
             eventString += MakerEntity != null ? MakerEntity.ToLink(link, pov, this) : "UNKNOWN ENTITY";

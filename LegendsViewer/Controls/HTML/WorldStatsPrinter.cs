@@ -303,10 +303,8 @@ namespace LegendsViewer.Controls.HTML
 
         private void PrintPlayerRelatedDwarfObjects()
         {
-            if (!_world.PlayerRelatedObjects.Any())
-            {
-                return;
-            }
+            if (!_world.PlayerRelatedObjects.Any()) return;
+
             Html.AppendLine("<div class=\"container-fluid\">");
             Html.AppendLine("<div class=\"row\">");
 
@@ -417,18 +415,8 @@ namespace LegendsViewer.Controls.HTML
         private void PrintMap()
         {
             int mapSideLength = 300;
-            double resizePercent;
-            Size mapSize;
-            if (_world.Map.Width > _world.Map.Height)
-            {
-                resizePercent = mapSideLength / Convert.ToDouble(_world.Map.Width);
-            }
-            else
-            {
-                resizePercent = mapSideLength / Convert.ToDouble(_world.Map.Height);
-            }
-
-            mapSize = new Size(Convert.ToInt32(_world.Map.Width * resizePercent), Convert.ToInt32(_world.Map.Height * resizePercent));
+            double resizePercent = mapSideLength / Convert.ToDouble(_world.Map.Width > _world.Map.Height ? _world.Map.Width : _world.Map.Height);
+            Size mapSize = new Size(Convert.ToInt32(_world.Map.Width * resizePercent), Convert.ToInt32(_world.Map.Height * resizePercent));
             using (Bitmap resizedMap = new Bitmap(mapSize.Width, mapSize.Height))
             {
                 using (Graphics resize = Graphics.FromImage(resizedMap))
@@ -473,21 +461,8 @@ namespace LegendsViewer.Controls.HTML
             Html.AppendLine("</ul>");
             Html.AppendLine("</br>");
 
-            Dictionary<CreatureInfo, int> deaths = new Dictionary<CreatureInfo, int>();
-            foreach (Battle battle in _world.Battles)
-            {
-                foreach (KeyValuePair<CreatureInfo, int> deathByRace in battle.Deaths)
-                {
-                    if (deaths.ContainsKey(deathByRace.Key))
-                    {
-                        deaths[deathByRace.Key] += deathByRace.Value;
-                    }
-                    else
-                    {
-                        deaths[deathByRace.Key] = deathByRace.Value;
-                    }
-                }
-            }
+            var creaturesThatDied = _world.Battles.SelectMany(b => b.Deaths.Select(d => d.Key)).Distinct().ToList();
+            Dictionary<CreatureInfo, int> deaths = creaturesThatDied.ToDictionary(k => k, v => _world.Battles.Sum(b => b.Deaths.ContainsKey(v) ? b.Deaths[v] : 0));
 
             Html.AppendLine("<h1><b>Battle Deaths by Race: " + deaths.Count + "</b></h2>");
             Html.AppendLine("<ol>");

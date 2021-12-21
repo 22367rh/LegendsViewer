@@ -36,7 +36,7 @@ namespace LegendsViewer.Legends.Events
             eventString += " searched ";
             eventString += Site?.ToLink(true, pov) ?? "an unknown site";
             eventString += PrintParentCollection(link, pov);
-            if (!string.IsNullOrEmpty(Result))
+            if (Result.IsNotNullOrEmpty())
             {
                 eventString += " and " + Result;
             }

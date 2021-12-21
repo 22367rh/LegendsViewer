@@ -180,14 +180,14 @@ namespace LegendsViewer.Legends.Events
             {
                 case AbuseType.Impaled:
                     eventString += "impaled on a ";
-                    eventString += !string.IsNullOrWhiteSpace(Material) ? Material + " " : "";
-                    if (!string.IsNullOrWhiteSpace(ItemSubType) && ItemSubType != "-1")
+                    eventString += Material.IsNotNullOrWhiteSpace() ? Material + " " : "";
+                    if (ItemSubType.IsNotNullOrWhiteSpace() && ItemSubType != "-1")
                     {
                         eventString += ItemSubType;
                     }
                     else
                     {
-                        eventString += !string.IsNullOrWhiteSpace(ItemType) ? ItemType : "UNKNOWN ITEM";
+                        eventString += ItemType.IsNotNullOrWhiteSpace() ? ItemType : "UNKNOWN ITEM";
                     }
                     break;
                 case AbuseType.Piled:

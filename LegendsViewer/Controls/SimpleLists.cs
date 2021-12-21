@@ -33,9 +33,9 @@ namespace LegendsViewer.Controls
         public IEnumerable<HistoricalFigure> GetList()
         {
             IEnumerable<HistoricalFigure> filtered = BaseList;
-            if (Name != "")
+            if (Name.IsNotNullOrEmpty())
             {
-                filtered = filtered.Where(hf => hf.Name.ToLower().Contains(Name.ToLower()));
+                filtered = filtered.Where(hf => hf.Name.ContainsIgnoreCase(Name));
             }
 
             if (Race != "All")
@@ -50,7 +50,7 @@ namespace LegendsViewer.Controls
 
             if (Type != "All")
             {
-                filtered = filtered.Where(hf => hf.AssociatedType == Type);
+                filtered = filtered.Where(hf => hf.AssociatedType.EqualsIgnoreCase(Type));
             }
 
             if (Deity)
@@ -60,22 +60,22 @@ namespace LegendsViewer.Controls
 
             if (Vampire)
             {
-                filtered = filtered.Where(hf => hf.ActiveInteractions.Any(x => x.Contains("VAMPIRE")));
+                filtered = filtered.Where(hf => hf.ActiveInteractions.Any(x => x.ContainsIgnoreCase("VAMPIRE")));
             }
 
             if (Werebeast)
             {
-                filtered = filtered.Where(hf => hf.ActiveInteractions.Any(x => x.Contains("WEREBEAST")));
+                filtered = filtered.Where(hf => hf.ActiveInteractions.Any(x => x.ContainsIgnoreCase("WEREBEAST")));
             }
 
             if (Necromancer)
             {
-                filtered = filtered.Where(hf => hf.ActiveInteractions.Any(x => x.Contains("SECRET") && !x.Contains("ANIMATE") && !x.Contains("UNDEAD_RES")));
+                filtered = filtered.Where(hf => hf.ActiveInteractions.Any(x => x.ContainsIgnoreCase("SECRET") && !x.ContainsIgnoreCase("ANIMATE") && !x.ContainsIgnoreCase("UNDEAD_RES")));
             }
 
             if (Animated)
             {
-                filtered = filtered.Where(hf => hf.Animated || hf.ActiveInteractions.Any(x => x.Contains("ANIMATE") || x.Contains("UNDEAD_RES")));
+                filtered = filtered.Where(hf => hf.Animated || hf.ActiveInteractions.Any(x => x.ContainsIgnoreCase("ANIMATE") || x.ContainsIgnoreCase("UNDEAD_RES")));
             }
 
             if (Force)
@@ -134,19 +134,19 @@ namespace LegendsViewer.Controls
         public readonly List<Site> BaseList;
         public SitesList(World setWorld) : base(setWorld)
         {
-            BaseList = World.Sites.Where(site => !string.IsNullOrWhiteSpace(site.Name)).ToList();
+            BaseList = World.Sites.Where(site => site.Name.IsNotNullOrWhiteSpace()).ToList();
         }
         public IEnumerable<Site> GetList()
         {
             IEnumerable<Site> filtered = BaseList;
-            if (Name != "")
+            if (Name.IsNotNullOrEmpty())
             {
-                filtered = filtered.Where(s => s.Name.ToLower().Contains(Name.ToLower()) || s.UntranslatedName.ToLower().Contains(Name.ToLower()));
+                filtered = filtered.Where(s => s.Name.ContainsIgnoreCase(Name) || s.UntranslatedName.ContainsIgnoreCase(Name));
             }
 
             if (Type != "All")
             {
-                filtered = filtered.Where(s => s.Type == Type);
+                filtered = filtered.Where(s => s.Type.EqualsIgnoreCase(Type));
             }
 
             if (SortOwners)
@@ -212,14 +212,14 @@ namespace LegendsViewer.Controls
         public IEnumerable<WorldRegion> GetList()
         {
             IEnumerable<WorldRegion> filtered = BaseList;
-            if (Name != "")
+            if (Name.IsNotNullOrEmpty())
             {
-                filtered = filtered.Where(r => r.Name.ToLower().Contains(Name.ToLower()));
+                filtered = filtered.Where(r => r.Name.ContainsIgnoreCase(Name));
             }
 
             if (Type != "All")
             {
-                filtered = filtered.Where(r => r.Type == Type);
+                filtered = filtered.Where(r => r.Type.EqualsIgnoreCase(Type));
             }
 
             if (SortEvents)
@@ -265,7 +265,7 @@ namespace LegendsViewer.Controls
             IEnumerable<UndergroundRegion> filtered = BaseList;
             if (Type != "All")
             {
-                filtered = filtered.Where(ur => ur.Type == Type);
+                filtered = filtered.Where(ur => ur.Type.EqualsIgnoreCase(Type));
             }
 
             if (SortEvents)
@@ -298,9 +298,9 @@ namespace LegendsViewer.Controls
         public IEnumerable<Landmass> GetList()
         {
             IEnumerable<Landmass> filtered = BaseList;
-            if (Name != "")
+            if (Name.IsNotNullOrEmpty())
             {
-                filtered = filtered.Where(element => element.Name.ToLower().Contains(Name.ToLower()));
+                filtered = filtered.Where(element => element.Name.ContainsIgnoreCase(Name));
             }
 
             if (SortEvents)
@@ -328,9 +328,9 @@ namespace LegendsViewer.Controls
         public IEnumerable<MountainPeak> GetList()
         {
             IEnumerable<MountainPeak> filtered = BaseList;
-            if (Name != "")
+            if (Name.IsNotNullOrEmpty())
             {
-                filtered = filtered.Where(element => element.Name.ToLower().Contains(Name.ToLower()));
+                filtered = filtered.Where(element => element.Name.ContainsIgnoreCase(Name));
             }
 
             if (SortEvents)
@@ -358,9 +358,9 @@ namespace LegendsViewer.Controls
         public IEnumerable<River> GetList()
         {
             IEnumerable<River> filtered = BaseList;
-            if (Name != "")
+            if (Name.IsNotNullOrEmpty())
             {
-                filtered = filtered.Where(element => element.Name.ToLower().Contains(Name.ToLower()));
+                filtered = filtered.Where(element => element.Name.ContainsIgnoreCase(Name));
             }
 
             if (SortEvents)
@@ -389,15 +389,15 @@ namespace LegendsViewer.Controls
         }
         public IEnumerable<Entity> GetList()
         {
-            IEnumerable<Entity> filtered = BaseList.Where(entity => entity.Name != "");
-            if (Name != "")
+            IEnumerable<Entity> filtered = BaseList.Where(entity => entity.Name.IsNotNullOrEmpty());
+            if (Name.IsNotNullOrEmpty())
             {
-                filtered = filtered.Where(e => e.Name.ToLower().Contains(Name.ToLower()));
+                filtered = filtered.Where(e => e.Name.ContainsIgnoreCase(Name));
             }
 
             if (Type != "All")
             {
-                filtered = filtered.Where(element => element.Type.GetDescription() == Type);
+                filtered = filtered.Where(element => element.Type.GetDescription().EqualsIgnoreCase(Type) );
             }
 
             if (Race != "All")
@@ -458,9 +458,9 @@ namespace LegendsViewer.Controls
         public IEnumerable<War> GetList()
         {
             IEnumerable<War> filtered = BaseList; // BaseList.Where(war => !World.FilterBattles || war.Notable);
-            if (Name != "")
+            if (Name.IsNotNullOrEmpty())
             {
-                filtered = filtered.Where(war => war.Name.ToLower().Contains(Name.ToLower()));
+                filtered = filtered.Where(war => war.Name.ContainsIgnoreCase(Name));
             }
 
             if (Ongoing)
@@ -514,9 +514,9 @@ namespace LegendsViewer.Controls
         public IEnumerable<Battle> GetList()
         {
             IEnumerable<Battle> filtered = BaseList;
-            if (Name != "")
+            if (Name.IsNotNullOrEmpty())
             {
-                filtered = filtered.Where(battle => battle.Name.ToLower().Contains(Name.ToLower()));
+                filtered = filtered.Where(battle => battle.Name.ContainsIgnoreCase(Name));
             }
 
             if (SortEvents)
@@ -550,9 +550,9 @@ namespace LegendsViewer.Controls
         public IEnumerable<Raid> GetList()
         {
             IEnumerable<Raid> filtered = BaseList;
-            if (Name != "")
+            if (Name.IsNotNullOrEmpty())
             {
-                filtered = filtered.Where(raid => raid.Name.ToLower().Contains(Name.ToLower()));
+                filtered = filtered.Where(raid => raid.Name.ContainsIgnoreCase(Name));
             }
 
             if (SortEvents)
@@ -586,19 +586,19 @@ namespace LegendsViewer.Controls
         public IEnumerable<Artifact> GetList()
         {
             IEnumerable<Artifact> filtered = BaseList;
-            if (Name != "")
+            if (Name.IsNotNullOrEmpty())
             {
-                filtered = filtered.Where(artifact => artifact.Name.ToLower().Contains(Name.ToLower()));
+                filtered = filtered.Where(artifact => artifact.Name.ContainsIgnoreCase(Name));
             }
 
-            if (!string.IsNullOrEmpty(Type) && Type != "All")
+            if (Type.IsNotNullOrEmpty() && Type != "All")
             {
-                filtered = filtered.Where(artifact => artifact.Type.ToLower().Contains(Type.ToLower()));
+                filtered = filtered.Where(artifact => artifact.Type.ContainsIgnoreCase(Type));
             }
 
-            if (!string.IsNullOrEmpty(Material))
+            if (Material.IsNotNullOrEmpty())
             {
-                filtered = filtered.Where(artifact => artifact.Material.ToLower().Contains(Material.ToLower()));
+                filtered = filtered.Where(artifact => artifact.Material.ContainsIgnoreCase(Material));
             }
 
             if (!ShowWrittenContent)
@@ -628,17 +628,18 @@ namespace LegendsViewer.Controls
         {
             BaseList = World.WrittenContents;
         }
+
         public IEnumerable<WrittenContent> GetList()
         {
             IEnumerable<WrittenContent> filtered = BaseList;
-            if (Name != "")
+            if (Name.IsNotNullOrEmpty())
             {
-                filtered = filtered.Where(element => element.Name.ToLower().Contains(Name.ToLower()));
+                filtered = filtered.Where(element => element.Name.ContainsIgnoreCase(Name));
             }
 
             if (Type != "All")
             {
-                filtered = filtered.Where(element => element.Type.GetDescription() == Type);
+                filtered = filtered.Where(element => element.Type.GetDescription().EqualsIgnoreCase(Type));
             }
 
             if (SortEvents)
@@ -666,9 +667,9 @@ namespace LegendsViewer.Controls
         public IEnumerable<DanceForm> GetList()
         {
             IEnumerable<DanceForm> filtered = BaseList;
-            if (Name != "")
+            if (Name.IsNotNullOrEmpty())
             {
-                filtered = filtered.Where(element => element.Name.ToLower().Contains(Name.ToLower()));
+                filtered = filtered.Where(element => element.Name.ContainsIgnoreCase(Name));
             }
 
             if (SortEvents)
@@ -696,9 +697,9 @@ namespace LegendsViewer.Controls
         public IEnumerable<MusicalForm> GetList()
         {
             IEnumerable<MusicalForm> filtered = BaseList;
-            if (Name != "")
+            if (Name.IsNotNullOrEmpty())
             {
-                filtered = filtered.Where(element => element.Name.ToLower().Contains(Name.ToLower()));
+                filtered = filtered.Where(element => element.Name.ContainsIgnoreCase(Name));
             }
 
             if (SortEvents)
@@ -726,9 +727,9 @@ namespace LegendsViewer.Controls
         public IEnumerable<PoeticForm> GetList()
         {
             IEnumerable<PoeticForm> filtered = BaseList;
-            if (Name != "")
+            if (Name.IsNotNullOrEmpty())
             {
-                filtered = filtered.Where(element => element.Name.ToLower().Contains(Name.ToLower()));
+                filtered = filtered.Where(element => element.Name.ContainsIgnoreCase(Name));
             }
 
             if (SortEvents)
@@ -755,14 +756,14 @@ namespace LegendsViewer.Controls
         public IEnumerable<WorldConstruction> GetList()
         {
             IEnumerable<WorldConstruction> filtered = BaseList;
-            if (Name != "")
+            if (Name.IsNotNullOrEmpty())
             {
-                filtered = filtered.Where(element => element.Name.ToLower().Contains(Name.ToLower()));
+                filtered = filtered.Where(element => element.Name.ContainsIgnoreCase(Name));
             }
 
             if (Type != "All")
             {
-                filtered = filtered.Where(element => element.Type.GetDescription() == Type);
+                filtered = filtered.Where(element => element.Type.GetDescription().EqualsIgnoreCase(Type) );
             }
 
             if (SortEvents)
@@ -790,14 +791,14 @@ namespace LegendsViewer.Controls
         public IEnumerable<Structure> GetList()
         {
             IEnumerable<Structure> filtered = BaseList;
-            if (Name != "")
+            if (Name.IsNotNullOrEmpty())
             {
-                filtered = filtered.Where(element => element.Name.ToLower().Contains(Name.ToLower()));
+                filtered = filtered.Where(element => element.Name.ContainsIgnoreCase(Name));
             }
 
             if (Type != "All")
             {
-                filtered = filtered.Where(element => element.TypeAsString == Type);
+                filtered = filtered.Where(element => element.TypeAsString.EqualsIgnoreCase(Type));
             }
 
             if (SortEvents)
@@ -826,14 +827,14 @@ namespace LegendsViewer.Controls
         public IEnumerable<SiteConquered> GetList()
         {
             IEnumerable<SiteConquered> filtered = BaseList;
-            if (Name != "")
+            if (Name.IsNotNullOrEmpty())
             {
-                filtered = filtered.Where(pillaging => pillaging.Name.ToLower().Contains(Name.ToLower()));
+                filtered = filtered.Where(pillaging => pillaging.Name.ContainsIgnoreCase(Name));
             }
 
             if (Type != "All")
             {
-                filtered = filtered.Where(conquering => conquering.ConquerType.ToString() == Type);
+                filtered = filtered.Where(conquering => conquering.ConquerType.ToString().EqualsIgnoreCase(Type));
             }
 
             if (SortEvents)
@@ -867,9 +868,9 @@ namespace LegendsViewer.Controls
         public IEnumerable<BeastAttack> GetList()
         {
             IEnumerable<BeastAttack> filtered = BaseList;
-            if (Name != "")
+            if (Name.IsNotNullOrEmpty())
             {
-                filtered = filtered.Where(beastAttack => beastAttack.Name.ToLower().Contains(Name.ToLower()));
+                filtered = filtered.Where(beastAttack => beastAttack.Name.ContainsIgnoreCase(Name));
             }
 
             if (SortEvents)

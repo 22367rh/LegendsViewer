@@ -38,11 +38,11 @@ namespace LegendsViewer.Legends.Events
             string eventString = GetYearTime();
             eventString += NewArtifact.ToLink(link, pov, this);
             eventString += ", ";
-            if (!string.IsNullOrWhiteSpace(NewArtifact.Material))
+            if (NewArtifact.Material.IsNotNullOrWhiteSpace())
             {
                 eventString += NewArtifact.Material;
             }
-            if (!string.IsNullOrWhiteSpace(NewArtifact.SubType))
+            if (NewArtifact.SubType.IsNotNullOrWhiteSpace())
             {
                 eventString += " ";
                 eventString += NewArtifact.SubType;
@@ -50,16 +50,16 @@ namespace LegendsViewer.Legends.Events
             else
             {
                 eventString += " ";
-                eventString += !string.IsNullOrWhiteSpace(NewArtifact.Type) ? NewArtifact.Type.ToLower() : "UNKNOWN TYPE";
+                eventString += NewArtifact.Type.IsNotNullOrWhiteSpace() ? NewArtifact.Type.ToLower() : "UNKNOWN TYPE";
             }
             eventString += ", was made from ";
             eventString += OldArtifact.ToLink(link, pov, this);
             eventString += ", ";
-            if (!string.IsNullOrWhiteSpace(OldArtifact.Material))
+            if (OldArtifact.Material.IsNotNullOrWhiteSpace())
             {
                 eventString += OldArtifact.Material;
             }
-            if (!string.IsNullOrWhiteSpace(OldArtifact.SubType))
+            if (OldArtifact.SubType.IsNotNullOrWhiteSpace())
             {
                 eventString += " ";
                 eventString += OldArtifact.SubType;
@@ -67,7 +67,7 @@ namespace LegendsViewer.Legends.Events
             else
             {
                 eventString += " ";
-                eventString += !string.IsNullOrWhiteSpace(OldArtifact.Type) ? OldArtifact.Type.ToLower() : "UNKNOWN TYPE";
+                eventString += OldArtifact.Type.IsNotNullOrWhiteSpace() ? OldArtifact.Type.ToLower() : "UNKNOWN TYPE";
             }
             if (Site != null)
             {

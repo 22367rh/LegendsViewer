@@ -111,7 +111,7 @@ namespace LegendsViewer.Legends.Events
                 eventString += HistoricalFigure.ToLink(link, pov, this);
             }
 
-            if (!string.IsNullOrWhiteSpace(Circumstance))
+            if (Circumstance.IsNotNullOrWhiteSpace())
             {
                 eventString += " ";
                 eventString += Circumstance;

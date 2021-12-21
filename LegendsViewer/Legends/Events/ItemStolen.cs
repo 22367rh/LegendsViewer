@@ -120,14 +120,14 @@ namespace LegendsViewer.Legends.Events
             }
             else
             {
-                if (string.IsNullOrEmpty(ItemType))
+                if (ItemType.IsNullOrEmpty())
                 {
                     eventString += " an unknown item ";
                 }
                 else
                 {
                     eventString += " a ";
-                    if (!string.IsNullOrWhiteSpace(Material))
+                    if (Material.IsNotNullOrWhiteSpace())
                     {
                         eventString += Material + " ";
                     }
@@ -135,7 +135,7 @@ namespace LegendsViewer.Legends.Events
                 }
             }
             eventString += " was ";
-            if (!string.IsNullOrWhiteSpace(TheftMethod))
+            if (TheftMethod.IsNotNullOrWhiteSpace())
             {
                 eventString += TheftMethod;
             }

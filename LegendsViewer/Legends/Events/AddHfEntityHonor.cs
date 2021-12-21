@@ -41,7 +41,7 @@ namespace LegendsViewer.Legends.Events
             eventString += $" received the title {Honor.Name} in ";
             eventString += Entity.ToLink(link, pov, this);
             string requirementsString = Honor.PrintRequirementsAsString();
-            if (!string.IsNullOrWhiteSpace(requirementsString))
+            if (requirementsString.IsNotNullOrWhiteSpace())
             {
                 eventString += $" after {requirementsString}";
             }

@@ -42,6 +42,11 @@ namespace LegendsViewer.Legends
             return new string(letters);
         }
 
+        private static readonly string[] esEndings = { "x", "ch", "sh", "s" };
+        private static readonly string[] iesEndings = { "y", "ay", "ey", "iy", "oy", "uy" };
+        private static readonly string[] vesEndings = { "f" };
+        private static readonly string[] sEndings = { "i", "le" };
+
         public static string MakePopulationPlural(string population)
         {
             string ending = "";
@@ -52,7 +57,7 @@ namespace LegendsViewer.Legends
                 population = population.Substring(0, population.IndexOf(" of"));
             }
 
-            if (population.EndsWith("Men") || population.EndsWith("men") || population == "Humans")
+            if (population.EndsWith("Men", StringComparison.InvariantCultureIgnoreCase) || population == "Humans")
             {
                 return population + ending;
             }
@@ -70,7 +75,7 @@ namespace LegendsViewer.Legends
             {
                 population = population.Replace("Man", "Men");
             }
-            else if (population.EndsWith("man") && !population.Contains("Human"))
+            else if (population.EndsWith("man") && !population.ContainsIgnoreCase("Human"))
             {
                 population = population.Replace("man", "men");
             }
@@ -82,19 +87,19 @@ namespace LegendsViewer.Legends
             {
                 population = population.Replace("woman", "women");
             }
-            else if (population.EndsWith("f"))
+            else if (population.EndsWith(vesEndings))
             {
                 population = population.Substring(0, population.Length - 1) + "ves";
             }
-            else if (population.EndsWith("x") || population.EndsWith("ch") || population.EndsWith("sh") || population.EndsWith("s"))
+            else if (population.EndsWith(esEndings))
             {
                 population += "es";
             }
-            else if (population.EndsWith("y") && !population.EndsWith("ay") && !population.EndsWith("ey") && !population.EndsWith("iy") && !population.EndsWith("oy") && !population.EndsWith("uy"))
+            else if (population.EndsWith(iesEndings))
             {
                 population = population.Substring(0, population.Length - 1) + "ies";
             }
-            else if (!population.EndsWith("i") && !population.EndsWith("le"))
+            else if (!population.EndsWith(sEndings))
             {
                 population += "s";
             }
@@ -109,7 +114,7 @@ namespace LegendsViewer.Legends
 
         public static string FormatRace(string race)
         {
-            if (race.Contains("FORGOTTEN"))
+            if (race.ContainsIgnoreCase("FORGOTTEN"))
             {
                 return "Forgotten Beast";
             }
@@ -184,9 +189,11 @@ namespace LegendsViewer.Legends
 
         public static Location ConvertToLocation(string coordinates)
         {
-            var indexOfComma = coordinates.IndexOf(',');
-            int x = int.Parse(coordinates.Substring(0, indexOfComma));
-            int y = int.Parse(coordinates.Substring(indexOfComma + 1, coordinates.Length - indexOfComma - 1));
+            if (!coordinates.Contains(",")) return new Location(0, 0);
+
+            var coordinateParts = coordinates.Replace(" ", "").Split(',');
+            int x = int.Parse(coordinateParts[0]);
+            int y = int.Parse(coordinateParts[1]);
             return new Location(x, y);
         }
 
@@ -210,7 +217,6 @@ namespace LegendsViewer.Legends
             dest = new Bitmap(imageSize.Width, imageSize.Height);
             using (Graphics g = Graphics.FromImage(dest))
             {
-
                 if (smooth)
                 {
                     g.SmoothingMode = SmoothingMode.AntiAlias;

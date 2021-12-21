@@ -130,7 +130,7 @@ namespace LegendsViewer.Controls.Tabs
             _siteSearch = new SitesList(World);
 
             var sites = from site in World.Sites
-                        where !string.IsNullOrWhiteSpace(site.Name)
+                        where site.Name.IsNotNullOrWhiteSpace()
                         orderby site.Type
                         group site by site.Type into sitetype
                         select sitetype;

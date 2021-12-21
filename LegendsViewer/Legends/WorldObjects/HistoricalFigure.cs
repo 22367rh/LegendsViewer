@@ -616,7 +616,7 @@ namespace LegendsViewer.Legends.WorldObjects
             {
                 string positionName = "";
                 var hfposition = Positions.Last();
-                EntityPosition position = hfposition.Entity.EntityPositions.FirstOrDefault(pos => pos.Name.ToLower() == hfposition.Title.ToLower());
+                EntityPosition position = hfposition.Entity.EntityPositions.FirstOrDefault(pos => pos.Name.EqualsIgnoreCase(hfposition.Title));
                 if (position != null)
                 {
                     positionName = position.GetTitleByCaste(Caste);
@@ -698,36 +698,17 @@ namespace LegendsViewer.Legends.WorldObjects
 
         public string CasteNoun(bool owner = false)
         {
-            if (Caste.ToLower() == "male")
+            if (Caste.EqualsIgnoreCase("male"))
             {
-                if (owner)
-                {
-                    return "his";
-                }
-                else
-                {
-                    return "he";
-                }
+                return owner ? "his" : "he";
             }
 
-            if (Caste.ToLower() == "female")
+            if (Caste.EqualsIgnoreCase("female"))
             {
-                if (owner)
-                {
-                    return "her";
-                }
-                else
-                {
-                    return "she";
-                }
+                return owner ? "her" : "she";
             }
 
-            if (owner)
-            {
-                return "its";
-            }
-
-            return "it";
+            return owner ? "its" : "it";
         }
 
         public string GetRaceTitleString()
@@ -749,11 +730,11 @@ namespace LegendsViewer.Legends.WorldObjects
                 hfraceString += "zombie ";
             }
 
-            if (Caste.ToUpper() == "MALE")
+            if (Caste.EqualsIgnoreCase("male"))
             {
                 hfraceString += "male ";
             }
-            else if (Caste.ToUpper() == "FEMALE")
+            else if (Caste.EqualsIgnoreCase("female"))
             {
                 hfraceString += "female ";
             }
@@ -773,18 +754,17 @@ namespace LegendsViewer.Legends.WorldObjects
             {
                 return Race.NameSingular.ToLower() + " deity";
             }
-
             if (Force)
             {
                 return "force";
             }
 
             string raceString = "";
-            if (!string.IsNullOrWhiteSpace(PreviousRace))
+            if (PreviousRace.IsNotNullOrWhiteSpace())
             {
                 raceString += PreviousRace.ToLower() + " turned ";
             }
-            else if (!string.IsNullOrWhiteSpace(AnimatedType) && !Name.Contains("Corpse"))
+            else if (AnimatedType.IsNotNullOrWhiteSpace() && !Name.ContainsIgnoreCase("Corpse"))
             {
                 raceString += AnimatedType.ToLower();
             }
@@ -808,18 +788,15 @@ namespace LegendsViewer.Legends.WorldObjects
 
         private string GetRaceStringForTimeStamp(int year, int month, int day)
         {
-            if (!CreatureTypes.Any())
-            {
-                return RaceString;
-            }
+            if (!CreatureTypes.Any()) return RaceString;
 
             List<CreatureType> relevantCreatureTypes = GetRelevantCreatureTypesByTimeStamp(year, month, day);
             string raceString = "";
-            if (!string.IsNullOrWhiteSpace(PreviousRace))
+            if (PreviousRace.IsNotNullOrWhiteSpace())
             {
                 raceString += PreviousRace.ToLower();
             }
-            else if (!string.IsNullOrWhiteSpace(AnimatedType))
+            else if (AnimatedType.IsNotNullOrWhiteSpace())
             {
                 raceString += AnimatedType.ToLower();
             }

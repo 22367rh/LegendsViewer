@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -92,10 +93,10 @@ namespace LegendsViewer.Controls.HTML
             foreach (Artifact artifact in relatedArtifacts)
             {
                 Html.AppendLine(ListItem + artifact.ToLink(true, _historicalFigure));
-                if (!string.IsNullOrWhiteSpace(artifact.Type))
+                if (artifact.Type.IsNotNullOrWhiteSpace())
                 {
                     Html.AppendLine(" a legendary " + artifact.Material + " ");
-                    Html.AppendLine(!string.IsNullOrWhiteSpace(artifact.SubType) ? artifact.SubType : artifact.Type.ToLower());
+                    Html.AppendLine(artifact.SubType.IsNotNullOrWhiteSpace() ? artifact.SubType : artifact.Type.ToLower());
                 }
                 List<string> relations = new List<string>();
                 if (createdArtifacts.Contains(artifact))
@@ -254,17 +255,17 @@ namespace LegendsViewer.Controls.HTML
             title += hf.Race != null && hf.Race != _historicalFigure.Race ? hf.Race.NameSingular + " " : "";
 
             string description = "";
-            if (hf.ActiveInteractions.Any(it => it.Contains("VAMPIRE")))
+            if (hf.ActiveInteractions.Any(it => it.ContainsIgnoreCase("VAMPIRE")))
             {
                 description += "Vampire ";
                 classes += " vampire";
             }
-            if (hf.ActiveInteractions.Any(it => it.Contains("WEREBEAST")))
+            if (hf.ActiveInteractions.Any(it => it.ContainsIgnoreCase("WEREBEAST")))
             {
                 description += "Werebeast ";
                 classes += " werebeast";
             }
-            if (hf.ActiveInteractions.Any(it => it.Contains("SECRET") && !it.Contains("ANIMATE") && !it.Contains("UNDEAD_RES")))
+            if (hf.ActiveInteractions.Any(it => it.ContainsIgnoreCase("SECRET") && !it.ContainsIgnoreCase("ANIMATE") && !it.ContainsIgnoreCase("UNDEAD_RES")))
             {
                 description += "Necromancer ";
                 classes += " necromancer";
@@ -282,11 +283,11 @@ namespace LegendsViewer.Controls.HTML
             if (additionalDescriptionAndClass.HasValue)
             {
                 var kvp = additionalDescriptionAndClass.Value;
-                if (!string.IsNullOrWhiteSpace(kvp.Key)) description += kvp.Key + " ";
-                if (!string.IsNullOrWhiteSpace(kvp.Value)) classes += " " + kvp.Value;
+                if (kvp.Key.IsNotNullOrWhiteSpace()) description += kvp.Key + " ";
+                if (kvp.Value.IsNotNullOrWhiteSpace()) classes += " " + kvp.Value;
             }
-            description += !string.IsNullOrWhiteSpace(hf.AssociatedType) && hf.AssociatedType != "Standard" ? hf.AssociatedType : "";
-            if (!string.IsNullOrWhiteSpace(description))
+            description += hf.AssociatedType.IsNotNullOrWhiteSpace() && hf.AssociatedType != "Standard" ? hf.AssociatedType : "";
+            if (description.IsNotNullOrWhiteSpace())
             {
                 description += "\\n--------------------\\n";
             }
@@ -423,7 +424,7 @@ namespace LegendsViewer.Controls.HTML
 
         private void PrintCurseLineage()
         {
-            if (_historicalFigure.ActiveInteractions.Any(interaction => interaction.Contains("CURSE")))
+            if (_historicalFigure.ActiveInteractions.Any(interaction => interaction.ContainsIgnoreCase("CURSE")))
             {
                 HistoricalFigure curser = _historicalFigure;
                 while (curser.LineageCurseParent != null && !curser.LineageCurseParent.Deity)
@@ -431,7 +432,7 @@ namespace LegendsViewer.Controls.HTML
                     curser = curser.LineageCurseParent;
                 }
                 string curse = "Curse";
-                if (!string.IsNullOrWhiteSpace(_historicalFigure.Interaction))
+                if (_historicalFigure.Interaction.IsNotNullOrWhiteSpace())
                 {
                     curse = Formatting.InitCaps(_historicalFigure.Interaction);
                 }
@@ -469,64 +470,61 @@ namespace LegendsViewer.Controls.HTML
 
         private void PrintBreedInfo()
         {
-            if (!string.IsNullOrWhiteSpace(_historicalFigure.BreedId))
+            if (_historicalFigure.BreedId.IsNullOrWhiteSpace()) return;
+
+            Html.AppendLine(Bold("Breed") + LineBreak);
+            Html.AppendLine("<ol>");
+            foreach (HistoricalFigure hfOfSameBreed in _world.Breeds[_historicalFigure.BreedId])
             {
-                Html.AppendLine(Bold("Breed") + LineBreak);
-                Html.AppendLine("<ol>");
-                foreach (HistoricalFigure hfOfSameBreed in _world.Breeds[_historicalFigure.BreedId])
-                {
-                    Html.AppendLine("<li>" + hfOfSameBreed.ToLink() + "</li>");
-                }
-                Html.AppendLine("</ol>");
+                Html.AppendLine("<li>" + hfOfSameBreed.ToLink() + "</li>");
             }
+            Html.AppendLine("</ol>");
         }
 
         private void PrintIdentities()
         {
-            if (_historicalFigure.Identities.Any())
+            if (!_historicalFigure.Identities.Any()) return;
+
+            Html.AppendLine(Bold("Secret Identities") + LineBreak);
+            Html.AppendLine("<ul>");
+            foreach (Identity identity in _historicalFigure.Identities)
             {
-                Html.AppendLine(Bold("Secret Identities") + LineBreak);
-                Html.AppendLine("<ul>");
-                foreach (Identity identity in _historicalFigure.Identities)
-                {
-                    Html.AppendLine("<li>" + identity.Print() + "</li>");
-                }
-                Html.AppendLine("</ul>");
+                Html.AppendLine("<li>" + identity.Print() + "</li>");
             }
+            Html.AppendLine("</ul>");
         }
 
         private void PrintSiteProperties()
         {
-            if (_historicalFigure.SiteProperties.Any())
+            if (!_historicalFigure.SiteProperties.Any()) return;
+            Html.AppendLine(Bold("Site Properties") + LineBreak);
+            Html.AppendLine("<ul>");
+            foreach (SiteProperty siteProperty in _historicalFigure.SiteProperties)
             {
-                Html.AppendLine(Bold("Site Properties") + LineBreak);
-                Html.AppendLine("<ul>");
-                foreach (SiteProperty siteProperty in _historicalFigure.SiteProperties)
+                Html.AppendLine("<li>");
+                if (siteProperty.Structure != null)
                 {
-                    Html.AppendLine("<li>");
-                    if (siteProperty.Structure != null)
-                    {
-                        Html.AppendLine(siteProperty.Structure.Type.GetDescription());
-                        Html.AppendLine(" (" + siteProperty.Structure.ToLink() + ")");
-                    }
-                    else if (siteProperty.Type != SitePropertyType.Unknown)
-                    {
-                        Html.AppendLine(siteProperty.Type.GetDescription());
-                    }
-                    else
-                    {
-                        Html.AppendLine("Property");
-                    }
-                    if (siteProperty.Site != null)
-                    {
-                        Html.AppendLine(" in ");
-                        Html.AppendLine(siteProperty.Site.ToLink());
-                    }
-
-                    Html.AppendLine("</li>");
+                    Html.AppendLine(siteProperty.Structure.Type.GetDescription());
+                    Html.AppendLine(" (" + siteProperty.Structure.ToLink() + ")");
                 }
-                Html.AppendLine("</ul>");
+                else if (siteProperty.Type != SitePropertyType.Unknown)
+                {
+                    Html.AppendLine(siteProperty.Type.GetDescription());
+                }
+                else
+                {
+                    Html.AppendLine("Property");
+                }
+
+                if (siteProperty.Site != null)
+                {
+                    Html.AppendLine(" in ");
+                    Html.AppendLine(siteProperty.Site.ToLink());
+                }
+
+                Html.AppendLine("</li>");
             }
+            Html.AppendLine("</ul>");
         }
 
         public override string GetTitle()
@@ -572,7 +570,7 @@ namespace LegendsViewer.Controls.HTML
                 }
                 title += " born in " + _historicalFigure.BirthYear;
 
-                var creatureInteractions = _historicalFigure.Events.Where(evt => evt.GetType() == typeof(HfDoesInteraction) && ((HfDoesInteraction)evt).Target.Id == _historicalFigure.Id).Select(evt => (HfDoesInteraction)evt).Where(interaction => !string.IsNullOrWhiteSpace(interaction.CreatureType)).ToList();
+                var creatureInteractions = _historicalFigure.Events.Where(evt => evt.GetType() == typeof(HfDoesInteraction) && ((HfDoesInteraction)evt).Target.Id == _historicalFigure.Id).Select(evt => (HfDoesInteraction)evt).Where(interaction => interaction.CreatureType.IsNotNullOrWhiteSpace()).ToList();
                 if (creatureInteractions.Any())
                 {
                     var curseInteraction = creatureInteractions.First();
@@ -627,11 +625,11 @@ namespace LegendsViewer.Controls.HTML
                 }
             }
             Html.AppendLine("<b>" + title + "</b></br>");
-            if (!string.IsNullOrWhiteSpace(_historicalFigure.Caste) && _historicalFigure.Caste != "Default")
+            if (_historicalFigure.Caste.IsNotNullOrWhiteSpace() && _historicalFigure.Caste != "Default")
             {
                 Html.AppendLine("<b>Caste:</b> " + _historicalFigure.Caste + "</br>");
             }
-            if (!string.IsNullOrWhiteSpace(_historicalFigure.AssociatedType) && _historicalFigure.AssociatedType != "Standard")
+            if (_historicalFigure.AssociatedType.IsNotNullOrWhiteSpace() && _historicalFigure.AssociatedType != "Standard")
             {
                 Html.AppendLine("<b>Type:</b> " + _historicalFigure.AssociatedType + "</br>");
             }
@@ -684,7 +682,7 @@ namespace LegendsViewer.Controls.HTML
                 foreach (HistoricalFigure.Position hfposition in _historicalFigure.Positions)
                 {
                     Html.AppendLine("<li>");
-                    EntityPosition position = hfposition.Entity.EntityPositions.FirstOrDefault(pos => pos.Name.ToLower() == hfposition.Title.ToLower());
+                    EntityPosition position = hfposition.Entity.EntityPositions.FirstOrDefault(pos => pos.Name.Equals(hfposition.Title, StringComparison.InvariantCultureIgnoreCase));
                     if (position != null)
                     {
                         string positionName = position.GetTitleByCaste(_historicalFigure.Caste);

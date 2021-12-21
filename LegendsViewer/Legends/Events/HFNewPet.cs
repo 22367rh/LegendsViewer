@@ -40,7 +40,7 @@ namespace LegendsViewer.Legends.Events
         public override string Print(bool link = true, DwarfObject pov = null)
         {
             string eventString = GetYearTime() + HistoricalFigure.ToLink(link, pov, this) + " tamed the creatures named ";
-            if (!string.IsNullOrWhiteSpace(Pet))
+            if (Pet.IsNotNullOrWhiteSpace())
             {
                 eventString += Pet;
             }

@@ -29,35 +29,35 @@ namespace LegendsViewer.Legends.Events
                     case "site_civ_id": SiteEntity = world.GetEntity(Convert.ToInt32(property.Value)); break;
                     case "site_id": Site = world.GetSite(Convert.ToInt32(property.Value)); break;
                     case "detected":
-                        if (string.IsNullOrEmpty(property.Value))
+                        if (property.Value.IsNullOrEmpty())
                         {
                             property.Known = true;
                             Detected = true;
                         }
                         break;
                     case "no_defeat_mention":
-                        if (string.IsNullOrEmpty(property.Value))
+                        if (property.Value.IsNullOrEmpty())
                         {
                             property.Known = true;
                             NoDefeatMention = true;
                         }
                         break;
                     case "was_raid":
-                        if (string.IsNullOrEmpty(property.Value))
+                        if (property.Value.IsNullOrEmpty())
                         {
                             property.Known = true;
                             WasRaid = true;
                         }
                         break;
                     case "took_livestock":
-                        if (string.IsNullOrEmpty(property.Value))
+                        if (property.Value.IsNullOrEmpty())
                         {
                             property.Known = true;
                             TookLiveStock = true;
                         }
                         break;
                     case "took_items":
-                        if (string.IsNullOrEmpty(property.Value))
+                        if (property.Value.IsNullOrEmpty())
                         {
                             property.Known = true;
                             TookItems = true;

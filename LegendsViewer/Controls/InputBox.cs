@@ -49,11 +49,8 @@ namespace LegendsViewer.Controls
                     if (form.DialogResult == DialogResult.OK)
                     {
                         string errorText = validation(textBox.Text);
-                        e.Cancel = !string.IsNullOrEmpty(errorText);
-                        if (!e.Cancel)
-                        {
-                            return;
-                        }
+                        e.Cancel = errorText.IsNotNullOrEmpty();
+                        if (!e.Cancel) return;
 
                         MessageBox.Show(form, errorText, "Validation Error",
                             MessageBoxButtons.OK, MessageBoxIcon.Error);

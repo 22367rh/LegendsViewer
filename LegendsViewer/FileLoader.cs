@@ -15,6 +15,8 @@ namespace LegendsViewer
 {
     public class FileLoader
     {
+        protected readonly string[] ImageFileTypes = { ".bmp", ".png", ".jpg", ".jpeg" };
+
         public bool Working;
         private Button _xmlButton, _historyButton, _sitesButton, _mapButton, _xmlPlusButton;
         private TextBox _xmlText, _historyText, _sitesText, _mapText, _xmlPlusText;
@@ -274,7 +276,7 @@ namespace LegendsViewer
 
         private void MapClick(object sender, EventArgs e)
         {
-            string mapFile = GetFile("Map Image | *.jpg;*.jpeg;*.bmp;*.png;|All Files|*.*");
+            string mapFile = GetFile("Map Image|" + string.Join(";", ImageFileTypes.Select(ift => "*" + ift)) +"|All Files|*.*");
             if (mapFile != "")
             {
                 _mapText.Text = mapFile;
@@ -286,7 +288,7 @@ namespace LegendsViewer
         private void XmlPlusClick(object sender, EventArgs e)
         {
             string xmlFile = GetFile("Legends XML Plus|*legends_plus.xml;|Legends XML Plus|*.xml;|All Files|*.*");
-            if (!string.IsNullOrEmpty(xmlFile))
+            if (xmlFile.IsNotNullOrEmpty())
             {
                 _xmlPlusText.Text = xmlFile;
                 XmlPlusState = FileState.Ready;
@@ -304,21 +306,16 @@ namespace LegendsViewer
             _mapText.Text = Directory.EnumerateFiles(directory, "*" + FileIdentifierWorldMapBmp).FirstOrDefault();
             _xmlPlusText.Text = Directory.EnumerateFiles(directory, "*" + FileIdentifierLegendsPlusXml).FirstOrDefault();
 
-            XmlState = String.IsNullOrEmpty(_xmlText.Text) ? FileState.NotReady : FileState.Ready;
-            HistoryState = String.IsNullOrEmpty(_historyText.Text) ? FileState.NotReady : FileState.Ready;
-            SitesState = String.IsNullOrEmpty(_sitesText.Text) ? FileState.NotReady : FileState.Ready;
-            MapState = String.IsNullOrEmpty(_mapText.Text) ? FileState.NotReady : FileState.Ready;
-            XmlPlusState = String.IsNullOrEmpty(_xmlPlusText.Text) ? FileState.NotReady : FileState.Ready;
+            XmlState = _xmlText.Text.IsNullOrEmpty() ? FileState.NotReady : FileState.Ready;
+            HistoryState = _historyText.Text.IsNullOrEmpty() ? FileState.NotReady : FileState.Ready;
+            SitesState = _sitesText.Text.IsNullOrEmpty() ? FileState.NotReady : FileState.Ready;
+            MapState = _mapText.Text.IsNullOrEmpty() ? FileState.NotReady : FileState.Ready;
+            XmlPlusState = _xmlPlusText.Text.IsNullOrEmpty() ? FileState.NotReady : FileState.Ready;
 
-            if (String.IsNullOrEmpty(_mapText.Text))
+            if (_mapText.Text.IsNullOrEmpty())
             {
-                string imageFile = Directory.GetFiles(directory)
-                    .FirstOrDefault(f =>
-                        (f.EndsWith(".bmp") ||
-                         f.EndsWith(".png") ||
-                         f.EndsWith(".jpg") ||
-                         f.EndsWith(".jpeg")));
-                if (!string.IsNullOrEmpty(imageFile))
+                string imageFile = Directory.GetFiles(directory).FirstOrDefault(f => f.EndsWith(ImageFileTypes));
+                if (imageFile.IsNotNullOrEmpty())
                 {
                     _mapText.Text = imageFile;
                     MapState = FileState.Ready;
@@ -470,6 +467,7 @@ namespace LegendsViewer
                 _statusLabel.Text = "ERROR!";
                 _statusLabel.ForeColor = Color.Red;
             }
+
             foreach (string delete in _extractedFiles)
             {
                 File.Delete(delete);
@@ -499,29 +497,28 @@ namespace LegendsViewer
             using (SevenZipExtractor extractor = new SevenZipExtractor(e.Argument as String))
             {
                 string fileNameLegendsXml = extractor.ArchiveFileNames.FirstOrDefault(file => file.EndsWith(FileIdentifierLegendsXml, StringComparison.OrdinalIgnoreCase));
-                if (string.IsNullOrEmpty(fileNameLegendsXml))
+                if (fileNameLegendsXml.IsNullOrEmpty())
                 {
                     throw new FileNotFoundException($"Could not find a 'region{FileIdentifierLegendsXml}' file.");
                 }
                 string region = fileNameLegendsXml.Replace(FileIdentifierLegendsXml, "");
 
                 string fileNameWorldHistoryTxt = extractor.ArchiveFileNames.FirstOrDefault(file => file.Equals(region + FileIdentifierWorldHistoryTxt));
-                if (string.IsNullOrEmpty(fileNameWorldHistoryTxt))
+                if (fileNameWorldHistoryTxt.IsNullOrEmpty())
                 {
                     throw new FileNotFoundException($"Could not find a 'region{FileIdentifierWorldHistoryTxt}' file.");
                 }
                 string fileNameWorldSitesAndPopsTxt = extractor.ArchiveFileNames.FirstOrDefault(file => file.Equals(region + FileIdentifierWorldSitesAndPops));
-                if (string.IsNullOrEmpty(fileNameWorldSitesAndPopsTxt))
+                if (fileNameWorldSitesAndPopsTxt.IsNullOrEmpty())
                 {
                     throw new FileNotFoundException($"Could not find a 'region{FileIdentifierWorldSitesAndPops}' file.");
                 }
                 string fileNameWorldMapBmp = extractor.ArchiveFileNames.FirstOrDefault(file => file.Contains(region + FileIdentifierWorldMapBmp));
-                if (string.IsNullOrEmpty(fileNameWorldMapBmp))
+                if (fileNameWorldMapBmp.IsNullOrEmpty())
                 {
-                    var extns = new[] { ".bmp", ".png", ".jpg", ".jpeg" };
-                    fileNameWorldMapBmp = extractor.ArchiveFileNames.FirstOrDefault(file => file.Contains(region) && extns.Contains(Path.GetExtension(file).ToLower()));
+                    fileNameWorldMapBmp = extractor.ArchiveFileNames.FirstOrDefault(file => file.Contains(region) && file.EndsWith(ImageFileTypes));
                 }
-                if (string.IsNullOrEmpty(fileNameWorldMapBmp))
+                if (fileNameWorldMapBmp.IsNullOrEmpty())
                 {
                     throw new FileNotFoundException($"Could not find a 'region{FileIdentifierWorldMapBmp}' file.");
                 }
@@ -533,7 +530,7 @@ namespace LegendsViewer
                 ExtractFile(extractor, outputDirectory, fileNameWorldHistoryTxt);
                 ExtractFile(extractor, outputDirectory, fileNameWorldSitesAndPopsTxt);
                 ExtractFile(extractor, outputDirectory, fileNameWorldMapBmp);
-                if (!string.IsNullOrEmpty(fileNameLegendsPlusXml))
+                if (fileNameLegendsPlusXml.IsNotNullOrEmpty())
                 {
                     ExtractFile(extractor, outputDirectory, fileNameLegendsPlusXml);
                 }

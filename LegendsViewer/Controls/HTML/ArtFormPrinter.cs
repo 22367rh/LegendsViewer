@@ -24,7 +24,7 @@ namespace LegendsViewer.Controls.HTML
             Html = new StringBuilder();
 
             Html.AppendLine("<h1>" + _artform.GetIcon() + " " + _artform.Name + ", " + _artform.FormType + " Form</h1><br />");
-            if (!string.IsNullOrEmpty(_artform.Description))
+            if (_artform.Description.IsNotNullOrEmpty())
             {
                 Html.AppendLine(_artform.Description.Replace("[B]", "<br />") + "<br /><br />");
             }

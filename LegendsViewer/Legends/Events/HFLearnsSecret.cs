@@ -47,13 +47,13 @@ namespace LegendsViewer.Legends.Events
                 eventString += " taught ";
                 eventString += Student != null ? Student.ToLink(link, pov, this) : "UNKNOWN HISTORICAL FIGURE";
                 eventString += " ";
-                eventString += !string.IsNullOrWhiteSpace(SecretText) ? SecretText : "(" + Interaction + ")";
+                eventString += !SecretText.IsNotNullOrWhiteSpace() ? SecretText : "(" + Interaction + ")";
             }
             else
             {
                 eventString += Student != null ? Student.ToLink(link, pov, this) : "UNKNOWN HISTORICAL FIGURE";
                 eventString += " learned ";
-                eventString += !string.IsNullOrWhiteSpace(SecretText) ? SecretText : "(" + Interaction + ")";
+                eventString += !SecretText.IsNotNullOrWhiteSpace() ? SecretText : "(" + Interaction + ")";
                 eventString += " from ";
                 eventString += Artifact != null ? Artifact.ToLink(link, pov, this) : "UNKNOWN ARTIFACT";
             }

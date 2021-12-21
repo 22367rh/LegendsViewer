@@ -378,11 +378,11 @@ namespace LegendsViewer.Legends.Events
                 {
                     eventString += " with " + Artifact.ToLink(link, pov, this);
                 }
-                else if (!string.IsNullOrWhiteSpace(ItemType) || !string.IsNullOrWhiteSpace(ItemSubType))
+                else if (ItemType.IsNotNullOrWhiteSpace() || ItemSubType.IsNotNullOrWhiteSpace())
                 {
                     eventString += " with a ";
-                    eventString += !string.IsNullOrWhiteSpace(ItemMaterial) ? ItemMaterial + " " : " ";
-                    eventString += !string.IsNullOrWhiteSpace(ItemSubType) ? ItemSubType : ItemType;
+                    eventString += ItemMaterial.IsNotNullOrWhiteSpace() ? ItemMaterial + " " : " ";
+                    eventString += ItemSubType.IsNotNullOrWhiteSpace() ? ItemSubType : ItemType;
                 }
             }
             else if (ShooterItemId >= 0)
@@ -391,11 +391,11 @@ namespace LegendsViewer.Legends.Events
                 {
                     eventString += " (shot) with " + ShooterArtifact.ToLink(link, pov, this);
                 }
-                else if (!string.IsNullOrWhiteSpace(ShooterItemType) || !string.IsNullOrWhiteSpace(ShooterItemSubType))
+                else if (ShooterItemType.IsNotNullOrWhiteSpace() || ShooterItemSubType.IsNotNullOrWhiteSpace())
                 {
                     eventString += " (shot) with a ";
-                    eventString += !string.IsNullOrWhiteSpace(ShooterItemMaterial) ? ShooterItemMaterial + " " : " ";
-                    eventString += !string.IsNullOrWhiteSpace(ShooterItemSubType) ? ShooterItemSubType : ShooterItemType;
+                    eventString += ShooterItemMaterial.IsNotNullOrWhiteSpace() ? ShooterItemMaterial + " " : " ";
+                    eventString += ShooterItemSubType.IsNotNullOrWhiteSpace() ? ShooterItemSubType : ShooterItemType;
                 }
             }
             else if (SlayerItemId >= 0)

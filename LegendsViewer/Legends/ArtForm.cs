@@ -32,7 +32,7 @@ namespace LegendsViewer.Legends
                         break;
                     case "description":
                         var index = property.Value.IndexOf(" is a ", StringComparison.Ordinal);
-                        if (index != -1 && string.IsNullOrEmpty(Name))
+                        if (index != -1 && Name.IsNullOrEmpty())
                         {
                             Name = property.Value.Substring(0, index);
                         }
@@ -40,7 +40,7 @@ namespace LegendsViewer.Legends
                         break;
                 }
             }
-            if (string.IsNullOrEmpty(Name))
+            if (Name.IsNullOrEmpty())
             {
                 Name = "Untitled";
             }

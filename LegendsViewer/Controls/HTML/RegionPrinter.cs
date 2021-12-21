@@ -80,25 +80,11 @@ namespace LegendsViewer.Controls.HTML
                     Html.AppendLine("<td>as part of</td>");
                     Html.AppendLine("<td>" + battle.ParentCollection.ToLink() + "</td>");
                     Html.AppendLine("<td>" + battle.Attacker.PrintEntity());
-                    if (battle.Victor == battle.Attacker)
-                    {
-                        Html.Append("<td>(V)</td>");
-                    }
-                    else
-                    {
-                        Html.AppendLine("<td></td>");
-                    }
+                    Html.Append("<td>" + (battle.Victor == battle.Attacker ? "(V)" : "") + "</td>");
 
                     Html.AppendLine("<td>Vs.</td>");
                     Html.AppendLine("<td>" + battle.Defender.PrintEntity());
-                    if (battle.Victor == battle.Defender)
-                    {
-                        Html.AppendLine("<td>(V)</td>");
-                    }
-                    else
-                    {
-                        Html.AppendLine("<td></td>");
-                    }
+                    Html.Append("<td>" + (battle.Victor == battle.Defender ? "(V)" : "") + "</td>");
 
                     Html.AppendLine("<td>(Deaths: " + (battle.AttackerDeathCount + battle.DefenderDeathCount) + ")</td>");
                     Html.AppendLine("</tr>");
@@ -137,12 +123,7 @@ namespace LegendsViewer.Controls.HTML
             int deathCount = _region.Events.OfType<HfDied>().Count();
             if (deathCount > 0 || _region.Battles.Any())
             {
-                var popInBattle =
-                    _region.Battles
-                        .Sum(
-                            battle =>
-                                battle.AttackerSquads.Sum(squad => squad.Deaths) +
-                                battle.DefenderSquads.Sum(squad => squad.Deaths));
+                var popInBattle = _region.Battles.Sum(battle => battle.AttackerSquads.Sum(squad => squad.Deaths) + battle.DefenderSquads.Sum(squad => squad.Deaths));
                 Html.AppendLine("<b>Deaths</b> " + LineBreak);
                 if (deathCount > 100)
                 {

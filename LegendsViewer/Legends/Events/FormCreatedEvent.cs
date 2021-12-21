@@ -104,7 +104,7 @@ namespace LegendsViewer.Legends.Events
             {
                 eventString += " in order to glorify " + GlorifiedHf.ToLink(link, pov, this);
             }
-            if (!string.IsNullOrWhiteSpace(Circumstance))
+            if (Circumstance.IsNotNullOrWhiteSpace())
             {
                 if (PrayToHf != null)
                 {

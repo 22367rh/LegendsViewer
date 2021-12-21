@@ -16,7 +16,7 @@ namespace LegendsViewer.Legends
         {
             get
             {
-                return Race.NamePlural.Contains("Outcasts");
+                return Race.NamePlural.ContainsIgnoreCase("Outcasts");
             }
         }
 
@@ -24,7 +24,7 @@ namespace LegendsViewer.Legends
         {
             get
             {
-                return Race.NamePlural.Contains("Prisoners");
+                return Race.NamePlural.ContainsIgnoreCase("Prisoners");
             }
         }
 
@@ -32,7 +32,7 @@ namespace LegendsViewer.Legends
         {
             get
             {
-                return Race.NamePlural.Contains("Slaves");
+                return Race.NamePlural.ContainsIgnoreCase("Slaves");
             }
         }
 
@@ -40,7 +40,7 @@ namespace LegendsViewer.Legends
         {
             get
             {
-                return Race.NamePlural.Contains("Visitors");
+                return Race.NamePlural.ContainsIgnoreCase("Visitors");
             }
         }
 
@@ -48,7 +48,7 @@ namespace LegendsViewer.Legends
         {
             get
             {
-                return Race.NamePlural.Contains(" Men") && !IsSlaves && !IsPrisoners && !IsOutcasts && !IsVisitors;
+                return Race.NamePlural.ContainsIgnoreCase(" Men") && !IsSlaves && !IsPrisoners && !IsOutcasts && !IsVisitors;
             }
         }
 

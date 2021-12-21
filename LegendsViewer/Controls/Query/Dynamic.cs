@@ -780,13 +780,13 @@ namespace LegendsViewer.Controls.Query
         {
             foreach (ParameterExpression pe in parameters)
             {
-                if (!String.IsNullOrEmpty(pe.Name))
+                if (pe.Name.IsNotNullOrEmpty())
                 {
                     AddSymbol(pe.Name, pe);
                 }
             }
 
-            if (parameters.Length == 1 && String.IsNullOrEmpty(parameters[0].Name))
+            if (parameters.Length == 1 && parameters[0].Name.IsNotNullOrEmpty())
             {
                 _it = parameters[0];
             }

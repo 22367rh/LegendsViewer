@@ -36,14 +36,14 @@ namespace LegendsViewer.Legends.Events
             eventString += "the masterful ";
             if (CreationEvent != null)
             {
-                eventString += !string.IsNullOrWhiteSpace(CreationEvent.Material) ? CreationEvent.Material + " " : "";
-                if (!string.IsNullOrWhiteSpace(CreationEvent.ItemSubType) && CreationEvent.ItemSubType != "-1")
+                eventString += CreationEvent.Material.IsNotNullOrWhiteSpace() ? CreationEvent.Material + " " : "";
+                if (CreationEvent.ItemSubType.IsNotNullOrWhiteSpace() && CreationEvent.ItemSubType != "-1")
                 {
                     eventString += CreationEvent.ItemSubType;
                 }
                 else
                 {
-                    eventString += !string.IsNullOrWhiteSpace(CreationEvent.ItemType) ? CreationEvent.ItemType : "UNKNOWN ITEM";
+                    eventString += CreationEvent.ItemType.IsNotNullOrWhiteSpace() ? CreationEvent.ItemType : "UNKNOWN ITEM";
                 }
                 eventString += " created by ";
                 eventString += CreationEvent.Maker != null ? CreationEvent.Maker.ToLink(link, pov, this) : "UNKNOWN HISTORICAL FIGURE";
